@@ -1,0 +1,291 @@
+// ProScreener: Métriques de Qualité de Trading
+// Calcule diverses métriques pour évaluer la qualité d'un instrument pour le trading
+// Compatible : Actions, Indices, Forex, Crypto
+// Unité de temps recommandée : 1 minute (pour ATR 1m)
+
+// ============================================
+// PARAMÈTRES
+// ============================================
+lookbackPeriod = 100     // Période d'analyse pour les calculs de moyenne
+atrPeriod = 14           // Période pour l'ATR
+vwapStart = 0            // Heure de début du VWAP (0 = début de journée)
+minBodyRatio = 0.5       // Ratio minimum corps/bougie pour qualité
+minVolRatio = 1.0        // Ratio minimum volume/moyenne pour qualité
+
+// ============================================
+// 1. VOLUME / MINUTE (× moyenne)
+// ============================================
+
+// Calcul de la moyenne du volume sur la période (remplace median)
+volumeAverage = AVERAGE[lookbackPeriod](volume)
+
+// Ratio volume actuel / moyenne
+IF volumeAverage > 0 THEN
+volumeRatio = volume / volumeAverage
+ELSE
+volumeRatio = 0
+ENDIF
+
+// Indicateur : Volume supérieur à la moyenne
+highVolume = volumeRatio >= minVolRatio
+
+// ============================================
+// 2. SPREAD RATIO (%)
+// ============================================
+
+// Approximation du spread via la range de la bougie
+// Spread = (High - Low) / Close * 100
+IF close > 0 THEN
+spreadRatio = ((high - low) / close) * 100
+ELSE
+spreadRatio = 0
+ENDIF
+
+// Spread moyen sur la période
+avgSpread = AVERAGE[lookbackPeriod](spreadRatio)
+
+// Indicateur : Spread faible (bon pour le trading)
+lowSpread = spreadRatio < avgSpread
+
+// ============================================
+// 3. ATR(1m) (× moyenne)
+// ============================================
+
+// Calcul de l'ATR
+atrValue = AverageTrueRange[atrPeriod](close)
+
+// Moyenne de l'ATR (remplace median)
+atrAverage = AVERAGE[lookbackPeriod](atrValue)
+
+// Ratio ATR actuel / moyenne
+IF atrAverage > 0 THEN
+atrRatio = atrValue / atrAverage
+ELSE
+atrRatio = 0
+ENDIF
+
+// ATR en % du prix (volatilité)
+IF close > 0 THEN
+atrPercent = (atrValue / close) * 100
+ELSE
+atrPercent = 0
+ENDIF
+
+// ============================================
+// 4. RATIO CORPS / MÈCHE
+// ============================================
+
+// Taille du corps de la bougie
+bodySize = ABS(close - open)
+
+// Taille totale de la bougie (range)
+candleRange = high - low
+
+// Ratio corps / range
+IF candleRange > 0 THEN
+bodyWickRatio = bodySize / candleRange
+ELSE
+bodyWickRatio = 0
+ENDIF
+
+// Indicateur : Corps fort (bon signal directionnel)
+strongBody = bodyWickRatio >= minBodyRatio
+
+// ============================================
+// 5. CHEVAUCHEMENT CORPS (%)
+// ============================================
+
+// Corps de la bougie actuelle
+currentBodyHigh = MAX(close, open)
+currentBodyLow = MIN(close, open)
+
+// Corps de la bougie précédente
+prevBodyHigh = MAX(close[1], open[1])
+prevBodyLow = MIN(close[1], open[1])
+
+// Calcul du chevauchement
+overlapHigh = MIN(currentBodyHigh, prevBodyHigh)
+overlapLow = MAX(currentBodyLow, prevBodyLow)
+overlapSize = MAX(0, overlapHigh - overlapLow)
+
+// Taille du corps précédent
+prevBodySize = ABS(close[1] - open[1])
+
+// Pourcentage de chevauchement
+IF prevBodySize > 0 THEN
+bodyOverlapPercent = (overlapSize / prevBodySize) * 100
+ELSE
+bodyOverlapPercent = 0
+ENDIF
+
+// ============================================
+// 6. RUN DIRECTIONNEL RÉCENT
+// ============================================
+
+// Compter les bougies haussières consécutives
+bullishRun = 0
+FOR i = 0 TO 9 DO
+IF close[i] > open[i] THEN
+bullishRun = bullishRun + 1
+ELSE
+BREAK
+ENDIF
+NEXT
+
+// Compter les bougies baissières consécutives
+bearishRun = 0
+FOR i = 0 TO 9 DO
+IF close[i] < open[i] THEN
+bearishRun = bearishRun + 1
+ELSE
+BREAK
+ENDIF
+NEXT
+
+// Run directionnel maximum (absolu)
+directionalRun = MAX(bullishRun, bearishRun)
+
+// Indicateur : Run directionnel présent (3+ bougies)
+hasDirectionalRun = directionalRun >= 3
+
+// ============================================
+// 7. VWAP ET ZONES
+// ============================================
+
+// Calcul du VWAP depuis le début de la journée
+// Cum = Somme cumulée
+ONCE sumPV = 0
+ONCE sumV = 0
+ONCE lastDay = 0
+IF time >= vwapStart OR dayofweek <> dayofweek[1] THEN
+startVWAP = 1
+sumPV = 0
+sumV = 0
+ENDIF
+
+IF startVWAP THEN
+sumPV = sumPV + (close * volume)
+sumV = sumV + volume
+IF sumV > 0 THEN
+vwap = sumPV / sumV
+ELSE
+vwap = close
+ENDIF
+ELSE
+vwap = close
+ENDIF
+
+// Distance au VWAP en %
+IF vwap > 0 THEN
+distanceToVWAP = ((close - vwap) / vwap) * 100
+ELSE
+distanceToVWAP = 0
+ENDIF
+
+// Indicateur : Respecte le VWAP (proche à +/- 0.5%)
+respectsVWAP = ABS(distanceToVWAP) <= 0.5
+
+// Position par rapport au VWAP
+aboveVWAP = close > vwap
+belowVWAP = close < vwap
+
+// ============================================
+// 8. SLIPPAGE / ATR APPROXIMÉ
+// ============================================
+
+// Slippage approximé comme % de l'ATR
+// Utilise le spread comme proxy du slippage potentiel
+IF atrValue > 0 THEN
+slippageRatio = spreadRatio / atrPercent
+ELSE
+slippageRatio = 0
+ENDIF
+
+// Indicateur : Slippage faible (< 10% de l'ATR)
+lowSlippage = slippageRatio < 0.1
+
+// ============================================
+// 9. INDICATEURS DE QUALITÉ SUPPLÉMENTAIRES
+// ============================================
+
+// Vitesse du flux (régularité du volume)
+// Écart-type du volume (plus faible = plus régulier)
+volumeStdDev = STD[20](volume)
+IF volumeAverage > 0 THEN
+volumeCV = volumeStdDev / volumeAverage
+ELSE
+volumeCV = 0
+ENDIF
+
+// Indicateur : Flux régulier (coefficient de variation < 0.5)
+regularFlow = volumeCV < 0.5
+
+// ============================================
+// 10. SCORE DE QUALITÉ GLOBAL
+// ============================================
+
+// Calcul du score (0-10)
+qualityScore = 0
+
+// +1 pour chaque critère rempli
+IF highVolume THEN
+qualityScore = qualityScore + 1
+ENDIF
+
+IF lowSpread THEN
+qualityScore = qualityScore + 1
+ENDIF
+
+IF strongBody THEN
+qualityScore = qualityScore + 1
+ENDIF
+
+IF hasDirectionalRun THEN
+qualityScore = qualityScore + 1
+ENDIF
+
+IF respectsVWAP THEN
+qualityScore = qualityScore + 1
+ENDIF
+
+IF lowSlippage THEN
+qualityScore = qualityScore + 1
+ENDIF
+
+IF regularFlow THEN
+qualityScore = qualityScore + 1
+ENDIF
+
+IF atrRatio >= 0.8 AND atrRatio <= 1.2 THEN
+qualityScore = qualityScore + 1
+ENDIF
+
+IF bodyOverlapPercent >= 30 AND bodyOverlapPercent <= 70 THEN
+qualityScore = qualityScore + 1
+ENDIF
+
+IF volumeRatio >= 1.5 THEN
+qualityScore = qualityScore + 1
+ENDIF
+
+// ============================================
+// CONDITIONS DU SCREENER
+// ============================================
+
+// Chercher les instruments de haute qualité (score >= 7)
+highQuality = qualityScore >= 7
+
+// Signal directionnel haussier
+bullishSignal = highQuality AND bullishRun >= 3 AND aboveVWAP
+
+// Signal directionnel baissier
+bearishSignal = highQuality AND bearishRun >= 3 AND belowVWAP
+
+// Condition principale : Qualité élevée OU signal directionnel
+c1 = highQuality OR bullishSignal OR bearishSignal
+
+// ============================================
+// SCREENER OUTPUT
+// ============================================
+
+SCREENER[c1](qualityScore AS "Score", volumeRatio AS "Vol/Moy", spreadRatio AS "Spread%", atrRatio AS "ATR/Moy", bodyWickRatio * 100 AS "Corps%", bodyOverlapPercent AS "Chevauche%", directionalRun AS "Run", distanceToVWAP AS "VWAP%", slippageRatio AS "Slip/ATR")
