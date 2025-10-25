@@ -1,6 +1,6 @@
-# ProRealTime ProScreener - Support et Résistance Niveau 3
+# ProRealTime ProScreener - Scripts de Trading
 
-Ce dépôt contient des scripts ProScreener pour détecter automatiquement les supports et résistances de niveau 3 sur ProRealTime.
+Ce dépôt contient des scripts ProScreener pour ProRealTime, incluant la détection de supports/résistances et l'analyse de métriques de qualité de trading.
 
 ## 📋 Qu'est-ce qu'un Support/Résistance Niveau 3 ?
 
@@ -14,7 +14,46 @@ Un support ou une résistance de **niveau 3** est un niveau de prix qui a été 
 
 ## 📁 Scripts Disponibles
 
-### 1. Version Complète : `support_resistance_level3.prt`
+### A. Métriques de Qualité de Trading
+
+#### `trading_quality_metrics.prt` - **NOUVEAU**
+Script complet pour évaluer la qualité d'un instrument de trading.
+
+**Fonctionnalités :**
+- Calcul de 10 métriques de qualité
+- Score global de 0 à 10
+- Volume vs médiane
+- ATR (Average True Range) vs médiane
+- Ratio corps/mèche des bougies
+- Chevauchement de corps
+- Détection de runs directionnels
+- Calcul du VWAP et distance au prix
+- Approximation du spread et slippage
+- Régularité du flux (volume)
+
+**Métriques calculées :**
+- Volume/Médiane : Liquidité relative
+- Spread% : Coûts de transaction approximés
+- ATR/Médiane : Volatilité relative
+- Corps% : Force directionnelle
+- Chevauchement% : Continuation ou consolidation
+- Run : Nombre de bougies consécutives (tendance)
+- VWAP% : Distance au VWAP
+- Slip/ATR : Slippage potentiel
+
+**📖 Documentation complète :** Voir [TRADING_METRICS_README.md](proscreener/TRADING_METRICS_README.md)
+
+**Recommandé pour :**
+- Trading intraday (1min, 5min, 15min)
+- Sélection d'instruments à trader
+- Évaluation de la qualité de setup
+- Filtrage avant entrée en position
+
+---
+
+### B. Support et Résistance Niveau 3
+
+#### 1. Version Complète : `support_resistance_level3.prt`
 Script avancé avec analyse détaillée des rebonds et de la force des niveaux.
 
 **Fonctionnalités :**
@@ -33,7 +72,7 @@ maxDistance = 2      // Distance max du prix au niveau (en %)
 minBounce = 1        // Force du rebond minimum (en %)
 ```
 
-### 2. Version Simplifiée : `support_resistance_level3_simple.prt`
+#### 2. Version Simplifiée : `support_resistance_level3_simple.prt`
 Script simplifié, plus rapide et facile à comprendre.
 
 **Fonctionnalités :**
