@@ -2,11 +2,11 @@
 
 ## Vue d'ensemble
 
-Le screener affiche **8 colonnes** numérotées de 1 à 8 dans ProRealTime. Voici leur signification exacte.
+Le screener affiche **9 colonnes** numérotées de 1 à 9 dans ProRealTime. Voici leur signification exacte.
 
 ---
 
-## 🔢 Colonnes du Screener
+## 🔢 Colonnes du Screener (9 colonnes)
 
 ### Critère 1 : `qualityScore` - Score Global de Qualité
 **Plage**: 0 à 13
@@ -96,15 +96,41 @@ Le screener affiche **8 colonnes** numérotées de 1 à 8 dans ProRealTime. Voic
 
 ---
 
-### Critères 6, 7, 8 : `trend1`, `trend2`, `trend3` - Tendances EMA
+### Critère 6 : `marketType` - Type de Marché (Bull/Bear/Range)
+**Plage**: -2 à +2
+**Signification**: Classification automatique du type de marché basée sur l'alignement des EMA
+
+**Valeurs**:
+- `+2` → 🔥 **Bull Fort** (toutes les EMA haussières, alignmentScore = 3)
+- `+1` → 🟢 **Bull Modéré** (2+ EMA haussières, tendance haussière probable)
+- `0` → ⚪ **Range/Neutre** (pas de direction claire, tendances mixtes)
+- `-1` → 🟠 **Bear Modéré** (2+ EMA baissières, tendance baissière probable)
+- `-2` → 🔴 **Bear Fort** (toutes les EMA baissières, alignmentScore = 3)
+
+**Interprétation**:
+- `+2` → Position LONG privilégiée, forte tendance haussière confirmée
+- `+1` → Position LONG possible, tendance haussière en formation
+- `0` → RANGE trading ou attente, pas de tendance claire
+- `-1` → Position SHORT possible, tendance baissière en formation
+- `-2` → Position SHORT privilégiée, forte tendance baissière confirmée
+
+**Utilisation stratégique**:
+- Filtrer `marketType >= +1` pour ne trader QUE les marchés haussiers
+- Filtrer `marketType <= -1` pour ne trader QUE les marchés baissiers
+- Filtrer `marketType = 0` pour stratégies de range (support/résistance)
+- Filtrer `ABS(marketType) = 2` pour les tendances les plus fortes
+
+---
+
+### Critères 7, 8, 9 : `trend1`, `trend2`, `trend3` - Tendances EMA
 **Plage**: -1, 0, +1
 **Signification**: Direction de chaque EMA par rapport au prix
 
 | Critère | EMA | Représente |
 |---------|-----|------------|
-| **6** | EMA 20 | Tendance **court terme** (quelques heures) |
-| **7** | EMA 50 | Tendance **moyen terme** (demi-journée) |
-| **8** | EMA 100 | Tendance **long terme** (journée complète) |
+| **7** | EMA 20 | Tendance **court terme** (quelques heures) |
+| **8** | EMA 50 | Tendance **moyen terme** (demi-journée) |
+| **9** | EMA 100 | Tendance **long terme** (journée complète) |
 
 **Valeurs**:
 - `+1` → 🟢 Prix > EMA (tendance **haussière**)
@@ -129,9 +155,10 @@ Critère 2 (volumeRatio):      2.3
 Critère 3 (atrRatio):         1.0
 Critère 4 (directionalRun):   4
 Critère 5 (alignmentScore):   3
-Critère 6 (trend1):           +1
-Critère 7 (trend2):           +1
-Critère 8 (trend3):           +1
+Critère 6 (marketType):       +2
+Critère 7 (trend1):           +1
+Critère 8 (trend2):           +1
+Critère 9 (trend3):           +1
 ```
 
 **Analyse**:
@@ -140,6 +167,7 @@ Critère 8 (trend3):           +1
 - ATR normal → Risque maîtrisé
 - 4 bougies haussières → Momentum confirmé
 - Toutes EMA haussières → Tendance claire sur tous timeframes
+- **marketType = +2 → BULL FORT confirmé**
 - **ACTION**: Achat fort avec SL serré
 
 ---
@@ -151,9 +179,10 @@ Critère 2 (volumeRatio):      0.7
 Critère 3 (atrRatio):         1.8
 Critère 4 (directionalRun):   2
 Critère 5 (alignmentScore):   1
-Critère 6 (trend1):           +1
-Critère 7 (trend2):           -1
-Critère 8 (trend3):           0
+Critère 6 (marketType):       0
+Critère 7 (trend1):           +1
+Critère 8 (trend2):           -1
+Critère 9 (trend3):           0
 ```
 
 **Analyse**:
@@ -162,6 +191,7 @@ Critère 8 (trend3):           0
 - ATR élevé (1.8x) → Forte volatilité, risque
 - Seulement 2 bougies → Pas de momentum
 - Tendances contradictoires (CT haussier, MT baissier)
+- **marketType = 0 → RANGE/Neutre, pas de direction claire**
 - **ACTION**: Éviter, attendre clarification
 
 ---
@@ -173,9 +203,10 @@ Critère 2 (volumeRatio):      1.9
 Critère 3 (atrRatio):         0.9
 Critère 4 (directionalRun):   5
 Critère 5 (alignmentScore):   3
-Critère 6 (trend1):           -1
-Critère 7 (trend2):           -1
-Critère 8 (trend3):           -1
+Critère 6 (marketType):       -2
+Critère 7 (trend1):           -1
+Critère 8 (trend2):           -1
+Critère 9 (trend3):           -1
 ```
 
 **Analyse**:
@@ -183,6 +214,7 @@ Critère 8 (trend3):           -1
 - Volume élevé → Pression vendeuse confirmée
 - 5 bougies baissières → Fort momentum
 - Toutes EMA baissières → Tendance baissière claire
+- **marketType = -2 → BEAR FORT confirmé**
 - **ACTION**: Vente ou short avec confirmation
 
 ---
@@ -212,25 +244,31 @@ condition = (qualityScore >= 7)  // Modifier le 7 pour filtrer +/- strict
 ## 📈 Stratégies d'Utilisation
 
 ### 1. **Trading de Momentum** (Scalping/Day Trading)
-- Filtrer: `qualityScore ≥ 9`
+- Filtrer: `qualityScore ≥ 9` ET `marketType = +2` (bull fort) OU `marketType = -2` (bear fort)
 - Chercher: `alignmentScore = 3` + `directionalRun ≥ 3`
-- Entrée: Dans la direction des trends (+1 ou -1)
+- Entrée: Dans la direction du marketType (+2 = LONG, -2 = SHORT)
 - Stop: Basé sur ATR (atrRatio * prix)
 
-### 2. **Retournements de Tendance**
+### 2. **Trading Directionnel Simplifié**
+- **LONG uniquement**: Filtrer `marketType >= +1` (bull modéré ou fort)
+- **SHORT uniquement**: Filtrer `marketType <= -1` (bear modéré ou fort)
+- **RANGE trading**: Filtrer `marketType = 0` + utiliser supports/résistances
+
+### 3. **Retournements de Tendance**
 - Filtrer: `directionalRun ≥ 5` (suracheté/survendu)
-- Chercher: Divergence (ex: trend1 ≠ trend3)
+- Chercher: Divergence (ex: trend1 ≠ trend3) + `marketType = 0`
 - Attendre: Confirmation inverse sur critère 4
 
-### 3. **Trading de Qualité Pure**
+### 4. **Trading de Qualité Pure**
 - Filtrer: `qualityScore ≥ 11`
 - Ignorer direction
-- Suivre le signal le plus fort (critères 6-7-8)
+- Suivre le signal le plus fort (critères 7-8-9 et marketType)
 
-### 4. **Gestion de Risque**
+### 5. **Gestion de Risque**
 - `atrRatio > 1.5` → Réduire taille position de 50%
 - `volumeRatio < 1.0` → Éviter (manque liquidité)
 - `alignmentScore < 2` → Skip (pas de clarté)
+- `marketType = 0` + pas de stratégie range → Éviter
 
 ---
 
@@ -251,7 +289,7 @@ condition = (qualityScore >= 7)  // Modifier le 7 pour filtrer +/- strict
 
 ## 📝 Notes Importantes
 
-1. **Le screener filtre automatiquement** : Seules les valeurs avec `qualityScore ≥ 7` s'affichent (ligne 284)
+1. **Le screener filtre automatiquement** : Seules les valeurs avec `qualityScore ≥ 7` s'affichent (ligne 304)
 
 2. **VWAP se réinitialise chaque jour** : Le calcul redémarre à chaque nouvelle session (ligne 94)
 
@@ -265,15 +303,17 @@ condition = (qualityScore >= 7)  // Modifier le 7 pour filtrer +/- strict
 
 ## 📞 Support
 
-Pour modifier les critères affichés, éditer la ligne 287:
+Pour modifier les critères affichés, éditer la ligne 307:
 ```prorealtime
-SCREENER[condition](qualityScore, volumeRatio, atrRatio, directionalRun, alignmentScore, trend1, trend2, trend3)
+SCREENER[condition](qualityScore, volumeRatio, atrRatio, directionalRun, alignmentScore, marketType, trend1, trend2, trend3)
 ```
 
-Ajouter/retirer des colonnes selon vos besoins (ex: ajouter `spreadRatio`, `vwapDistance`, etc.)
+Ajouter/retirer des colonnes selon vos besoins (ex: ajouter `spreadRatio`, `vwapDistance`, `bodyWickRatio`, etc.)
+
+**Conseil**: Le critère `marketType` est particulièrement utile pour filtrer rapidement les opportunités selon votre style de trading (LONG, SHORT, ou RANGE)
 
 ---
 
-**Version**: 2.0 FINAL
+**Version**: 2.1 (ajout marketType)
 **Date**: 2025-10-26
 **Compatibilité**: ProRealTime V12+ / ProScreener

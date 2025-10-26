@@ -1,6 +1,7 @@
-// ProScreener V2.0 - Metriques de Trading
+// ProScreener V2.1 - Metriques de Trading
 // Compatible ProRealTime V12+
 // Timeframe recommande: 1 minute
+// NEW: Critere marketType (bull/bear/range classification)
 
 // === PARAMETRES ===
 lookbackPeriod = 100
@@ -224,6 +225,25 @@ IF enableMTF = 1 THEN
     strongAlign = (trendAligned AND avgStrength > 0.5)
     moderateAlign = (trendPartialAlign AND avgStrength > 0.3)
 
+    // Classification du type de marche
+    IF bullishAlign = 3 THEN
+        marketType = 2
+    ELSE
+        IF bullishAlign >= 2 THEN
+            marketType = 1
+        ELSE
+            IF bearishAlign = 3 THEN
+                marketType = -2
+            ELSE
+                IF bearishAlign >= 2 THEN
+                    marketType = -1
+                ELSE
+                    marketType = 0
+                ENDIF
+            ENDIF
+        ENDIF
+    ENDIF
+
 ELSE
     trend1 = 0
     trend2 = 0
@@ -231,6 +251,7 @@ ELSE
     alignmentScore = 0
     strongAlign = 0
     moderateAlign = 0
+    marketType = 0
 ENDIF
 
 // === 11. SCORE GLOBAL ===
@@ -284,4 +305,4 @@ ENDIF
 condition = (qualityScore >= 7)
 
 // === 13. SCREENER ===
-SCREENER[condition](qualityScore, volumeRatio, atrRatio, directionalRun, alignmentScore, trend1, trend2, trend3)
+SCREENER[condition](qualityScore, volumeRatio, atrRatio, directionalRun, alignmentScore, marketType, trend1, trend2, trend3)
