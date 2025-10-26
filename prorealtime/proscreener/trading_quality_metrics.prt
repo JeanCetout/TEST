@@ -1,7 +1,8 @@
-// ProScreener: Métriques de Qualité de Trading
+// ProScreener: Métriques de Qualité de Trading + Multi-Timeframe
 // Calcule diverses métriques pour évaluer la qualité d'un instrument pour le trading
 // Compatible : Actions, Indices, Forex, Crypto
 // Unité de temps recommandée : 1 minute (pour ATR 1m)
+// VERSION 2.0 - Avec analyse multi-timeframe
 
 // ============================================
 // PARAMÈTRES
@@ -11,6 +12,10 @@ atrPeriod = 14           // Période pour l'ATR
 vwapStart = 0            // Heure de début du VWAP (0 = début de journée)
 minBodyRatio = 0.5       // Ratio minimum corps/bougie pour qualité
 minVolRatio = 1.0        // Ratio minimum volume/moyenne pour qualité
+
+// Paramètres Multi-Timeframe
+enableMTF = 1            // 1 = activer multi-TF, 0 = désactiver
+trendPeriod = 20         // Période pour calcul de tendance (EMA)
 
 // ============================================
 // 1. VOLUME / MINUTE (× moyenne)
@@ -220,10 +225,143 @@ ENDIF
 regularFlow = volumeCV < 0.5
 
 // ============================================
-// 10. SCORE DE QUALITÉ GLOBAL
+// 10. ANALYSE MULTI-TIMEFRAME (NOUVEAU)
 // ============================================
 
-// Calcul du score (0-10)
+IF enableMTF = 1 THEN
+
+    // ===== TIMEFRAME ACTUEL =====
+    // EMA pour déterminer la tendance
+    ema_current = ExponentialAverage[trendPeriod](close)
+
+    // Direction de la tendance actuelle
+    IF close > ema_current THEN
+        trend_current = 1      // Haussier
+    ELSIF close < ema_current THEN
+        trend_current = -1     // Baissier
+    ELSE
+        trend_current = 0      // Neutre
+    ENDIF
+
+    // Force de la tendance actuelle (distance à l'EMA en %)
+    IF ema_current > 0 THEN
+        trendStrength_current = ((close - ema_current) / ema_current) * 100
+    ELSE
+        trendStrength_current = 0
+    ENDIF
+
+
+    // ===== TIMEFRAME SUPÉRIEUR 1 (5 min si on est en 1 min) =====
+    // Récupération des données du TF supérieur
+    close_tf2 = TIMEFRAME(5 minutes, close)
+    ema_tf2 = TIMEFRAME(5 minutes, ExponentialAverage[trendPeriod](close))
+
+    // Direction de la tendance TF2
+    IF close_tf2 > ema_tf2 THEN
+        trend_tf2 = 1          // Haussier
+    ELSIF close_tf2 < ema_tf2 THEN
+        trend_tf2 = -1         // Baissier
+    ELSE
+        trend_tf2 = 0          // Neutre
+    ENDIF
+
+    // Force de la tendance TF2
+    IF ema_tf2 > 0 THEN
+        trendStrength_tf2 = ((close_tf2 - ema_tf2) / ema_tf2) * 100
+    ELSE
+        trendStrength_tf2 = 0
+    ENDIF
+
+
+    // ===== TIMEFRAME SUPÉRIEUR 2 (15 min si on est en 1 min) =====
+    // Récupération des données du TF supérieur
+    close_tf3 = TIMEFRAME(15 minutes, close)
+    ema_tf3 = TIMEFRAME(15 minutes, ExponentialAverage[trendPeriod](close))
+
+    // Direction de la tendance TF3
+    IF close_tf3 > ema_tf3 THEN
+        trend_tf3 = 1          // Haussier
+    ELSIF close_tf3 < ema_tf3 THEN
+        trend_tf3 = -1         // Baissier
+    ELSE
+        trend_tf3 = 0          // Neutre
+    ENDIF
+
+    // Force de la tendance TF3
+    IF ema_tf3 > 0 THEN
+        trendStrength_tf3 = ((close_tf3 - ema_tf3) / ema_tf3) * 100
+    ELSE
+        trendStrength_tf3 = 0
+    ENDIF
+
+
+    // ===== ANALYSE DE L'ALIGNEMENT =====
+
+    // Compteur d'alignement haussier
+    bullishAlign = 0
+    IF trend_current = 1 THEN
+        bullishAlign = bullishAlign + 1
+    ENDIF
+    IF trend_tf2 = 1 THEN
+        bullishAlign = bullishAlign + 1
+    ENDIF
+    IF trend_tf3 = 1 THEN
+        bullishAlign = bullishAlign + 1
+    ENDIF
+
+    // Compteur d'alignement baissier
+    bearishAlign = 0
+    IF trend_current = -1 THEN
+        bearishAlign = bearishAlign + 1
+    ENDIF
+    IF trend_tf2 = -1 THEN
+        bearishAlign = bearishAlign + 1
+    ENDIF
+    IF trend_tf3 = -1 THEN
+        bearishAlign = bearishAlign + 1
+    ENDIF
+
+    // Alignement total (3 TF dans la même direction)
+    trendAligned = (bullishAlign = 3) OR (bearishAlign = 3)
+
+    // Alignement partiel (2 TF sur 3)
+    trendPartialAlign = (bullishAlign >= 2) OR (bearishAlign >= 2)
+
+    // Divergence (tendances opposées)
+    trendDivergence = (bullishAlign >= 1 AND bearishAlign >= 1)
+
+    // Score d'alignement (0-3)
+    alignmentScore = MAX(bullishAlign, bearishAlign)
+
+    // Force moyenne de la tendance multi-TF
+    avgTrendStrength = (ABS(trendStrength_current) + ABS(trendStrength_tf2) + ABS(trendStrength_tf3)) / 3
+
+    // Indicateurs de confirmation
+    strongTrendAlignment = trendAligned AND avgTrendStrength > 0.5
+    moderateTrendAlignment = trendPartialAlign AND avgTrendStrength > 0.3
+
+ELSE
+    // Si multi-TF désactivé
+    trend_current = 0
+    trend_tf2 = 0
+    trend_tf3 = 0
+    trendAligned = 0
+    trendPartialAlign = 0
+    trendDivergence = 0
+    alignmentScore = 0
+    avgTrendStrength = 0
+    strongTrendAlignment = 0
+    moderateTrendAlignment = 0
+    trendStrength_current = 0
+    trendStrength_tf2 = 0
+    trendStrength_tf3 = 0
+ENDIF
+
+// ============================================
+// 11. SCORE DE QUALITÉ GLOBAL (AMÉLIORÉ)
+// ============================================
+
+// Calcul du score de base (0-10)
 qualityScore = 0
 
 // +1 pour chaque critère rempli
@@ -267,24 +405,64 @@ IF volumeRatio >= 1.5 THEN
     qualityScore = qualityScore + 1
 ENDIF
 
+// Bonus Multi-Timeframe (jusqu'à +3 points)
+IF enableMTF = 1 THEN
+    // +2 si alignement parfait (3 TF)
+    IF strongTrendAlignment THEN
+        qualityScore = qualityScore + 2
+    // +1 si alignement partiel (2 TF)
+    ELSIF moderateTrendAlignment THEN
+        qualityScore = qualityScore + 1
+    ENDIF
+
+    // +1 si forte tendance moyenne
+    IF avgTrendStrength > 1.0 THEN
+        qualityScore = qualityScore + 1
+    ENDIF
+ENDIF
+
+// Score maximum = 13 avec multi-TF, 10 sans
+
 // ============================================
-// CONDITIONS DU SCREENER
+// 12. CONDITIONS DU SCREENER (AMÉLIORÉES)
 // ============================================
 
 // Chercher les instruments de haute qualité (score >= 7)
 highQuality = qualityScore >= 7
 
-// Signal directionnel haussier
-bullishSignal = highQuality AND bullishRun >= 3 AND aboveVWAP
+// Signal directionnel haussier (avec confirmation MTF)
+IF enableMTF = 1 THEN
+    bullishSignal = highQuality AND bullishRun >= 3 AND aboveVWAP AND (trend_tf2 = 1 OR trend_tf3 = 1)
+    bearishSignal = highQuality AND bearishRun >= 3 AND belowVWAP AND (trend_tf2 = -1 OR trend_tf3 = -1)
+ELSE
+    bullishSignal = highQuality AND bullishRun >= 3 AND aboveVWAP
+    bearishSignal = highQuality AND bearishRun >= 3 AND belowVWAP
+ENDIF
 
-// Signal directionnel baissier
-bearishSignal = highQuality AND bearishRun >= 3 AND belowVWAP
+// Signal ultra-fort (alignement complet)
+ultraBullish = bullishSignal AND trendAligned AND bullishAlign = 3
+ultraBearish = bearishSignal AND trendAligned AND bearishAlign = 3
+
+// Alerte divergence (attention)
+divergenceAlert = highQuality AND trendDivergence
 
 // Condition principale : Qualité élevée OU signal directionnel
 c1 = highQuality OR bullishSignal OR bearishSignal
 
 // ============================================
-// SCREENER OUTPUT
+// 13. SCREENER OUTPUT
 // ============================================
 
-SCREENER[c1](qualityScore AS "Score", volumeRatio AS "Vol/Moy", spreadRatio AS "Spread%", atrRatio AS "ATR/Moy", bodyWickRatio * 100 AS "Corps%", bodyOverlapPercent AS "Chevauche%", directionalRun AS "Run", distanceToVWAP AS "VWAP%", slippageRatio AS "Slip/ATR")
+SCREENER[c1](
+    qualityScore AS "Score",
+    volumeRatio AS "Vol/Moy",
+    spreadRatio AS "Spread%",
+    atrRatio AS "ATR/Moy",
+    bodyWickRatio * 100 AS "Corps%",
+    directionalRun AS "Run",
+    distanceToVWAP AS "VWAP%",
+    alignmentScore AS "Align",
+    trend_current AS "T1m",
+    trend_tf2 AS "T5m",
+    trend_tf3 AS "T15m"
+)
