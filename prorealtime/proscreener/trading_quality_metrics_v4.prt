@@ -26,8 +26,8 @@
 // -1 = Bear Modere | -2 = Bear Fort
 //
 // LEGENDE Scalp (scalpQuality):
-// 1 = Adapte scalping (volume eleve + spread faible + volatilite OK)
-// 0 = Non adapte scalping (criteres non remplis)
+// 1 = Adapte scalping (volume >= 2.0x + spread <= 0.3% + ATR <= 1.3x + speed >= 1.8)
+// 0 = Non adapte scalping (au moins un critere non rempli)
 //
 // LEGENDE Speed (speedMeter) - NEW V4.0:
 // >= 2.5 = Tres rapide (excellent pour scalping)
@@ -371,11 +371,11 @@ tickActivity = volumeRatio
 // >= 2.5 = Tres rapide | 2.0-2.5 = Rapide | 1.5-2.0 = Moyen | < 1.5 = Lent
 speedMeter = (velocityRatio + tickActivity) / 2
 
-// === 13. CRITERE SCALPING (V3.1) ===
+// === 13. CRITERE SCALPING (V3.1 + V4.0) ===
 // Determine si l'instrument est adapte au scalping
-// Criteres: Volume eleve + Spread faible + Volatilite maitrisee
+// Criteres: Volume eleve + Spread faible + Volatilite maitrisee + Speed suffisant (V4.0)
 scalpQuality = 0
-IF volumeRatio >= minVolumeScalping AND spreadRatio <= maxSpreadScalping AND atrRatio <= maxATRScalping THEN
+IF volumeRatio >= minVolumeScalping AND spreadRatio <= maxSpreadScalping AND atrRatio <= maxATRScalping AND speedMeter >= minSpeedScalping THEN
     scalpQuality = 1
 ENDIF
 
