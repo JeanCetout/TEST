@@ -1,62 +1,94 @@
-# 📊 ProRealTime Trading Quality Metrics - Version 3.0
+# 📊 ProRealTime Trading Quality Metrics - Version 3.1
 
-**Screener ProRealTime avancé avec colonnes personnalisées pour analyser la qualité de trading et classifier automatiquement les marchés (Bull/Bear/Range).**
+**Screener ProRealTime avancé avec colonnes personnalisées, optimisé pour le scalping de qualité avec filtres liquidité/spread.**
 
-[![Version](https://img.shields.io/badge/version-3.0-brightgreen.svg)](https://github.com)
+[![Version](https://img.shields.io/badge/version-3.1-brightgreen.svg)](https://github.com)
 [![ProRealTime](https://img.shields.io/badge/ProRealTime-V12%2B-green.svg)](https://www.prorealtime.com)
 [![License](https://img.shields.io/badge/license-Educational-orange.svg)](https://github.com)
 [![Tested](https://img.shields.io/badge/status-Tested%20%26%20Working-success.svg)](https://github.com)
 
 ---
 
-## 🆕 NOUVEAUTÉ VERSION 3.0
+## 🆕 NOUVEAUTÉ VERSION 3.1 - MODE SCALPING
 
-### ✨ Colonnes Personnalisées dans ProScreener
+### ⚡ Filtre Scalping de Qualité
 
-**AVANT (V2.x)** : Les colonnes affichaient des noms de variables techniques
+**VERSION 3.1** ajoute un critère **"Scalp"** pour identifier les instruments optimaux pour le scalping !
+
+**Nouvelle colonne** : **"Scalp"** (colonne 7)
+- **1** = ✅ Adapté scalping (liquidité élevée + spread faible + volatilité maîtrisée)
+- **0** = ❌ Non adapté scalping (critères non remplis)
+
+**Critères Scalping** :
+- 💰 **Volume ≥ 2.0x** la moyenne (liquidité excellente)
+- 📉 **Spread ≤ 0.3%** du prix (coûts minimaux)
+- 📊 **ATR ≤ 1.3x** la moyenne (volatilité contrôlée)
+
+**Affichage ProScreener V3.1** :
+```
+Score | Volume | ATR | Run | Align | Type | Scalp | T1 | T2 | T3
+                                           ↑
+                                        NOUVEAU!
+```
+
+**Impact pour scalpers** :
+- ⚡ **Filtrage instantané** : Tri par colonne "Scalp" = 1
+- 💰 **Coûts minimisés** : Spread faible = plus de profit net
+- 🎯 **Exécution optimale** : Volume élevé = slippage réduit
+- 📊 **Risque maîtrisé** : Volatilité contrôlée = stops précis
+
+---
+
+## ✨ Historique V3.0 - Colonnes Personnalisées
+
+**VERSION 3.0** a introduit les colonnes personnalisées :
+
+**AVANT (V2.x)** : Noms de variables techniques
 ```
 qualityScore | volumeRatio | atrRatio | directionalRun | ...
 ```
 
-**MAINTENANT (V3.0)** : Les colonnes affichent des noms clairs et lisibles
+**APRÈS (V3.0)** : Noms clairs et lisibles
 ```
 Score | Volume | ATR | Run | Align | Type | T1 | T2 | T3
 ```
-
-**Impact** : Interface ultra-lisible, compréhension immédiate, utilisation professionnelle ! 🚀
 
 ---
 
 ## 🎯 Qu'est-ce que ce screener fait ?
 
-Ce **ProScreener V3** analyse en temps réel la qualité de trading de vos instruments financiers et vous aide à :
+Ce **ProScreener V3.1** analyse en temps réel la qualité de trading de vos instruments financiers et vous aide à :
 
 ✅ **Identifier les meilleures opportunités** grâce à un score de qualité sur 13 points
 ✅ **Classifier automatiquement le type de marché** (Bull Fort/Modéré, Bear Fort/Modéré, Range/Neutre)
 ✅ **Analyser 10 métriques techniques** (volume, volatilité, momentum, VWAP, slippage, régularité)
 ✅ **Détecter l'alignement des tendances** sur 3 timeframes (court/moyen/long terme)
 ✅ **Filtrer rapidement** selon votre stratégie (LONG, SHORT, ou RANGE trading)
-✅ **Afficher des colonnes lisibles** avec noms personnalisés (Score, Volume, ATR, Run, etc.)
+✅ **Identifier les instruments adaptés au scalping** avec critères volume/spread/volatilité
+✅ **Afficher des colonnes lisibles** avec noms personnalisés (Score, Volume, ATR, Run, Scalp, etc.)
 
 ---
 
-## 📋 Les 9 Colonnes Affichées
+## 📋 Les 10 Colonnes Affichées
 
-Le screener affiche **9 colonnes nommées** dans ProRealTime :
+Le screener affiche **10 colonnes nommées** dans ProRealTime :
 
 | # | Colonne Affichée | Nom Variable | Description | Plage | Optimal |
 |---|------------------|--------------|-------------|-------|---------|
 | **1** | **Score** | qualityScore | Score global de qualité | 0-13 | ≥ 10 |
-| **2** | **Volume** | volumeRatio | Volume/Moyenne (100 périodes) | 0-∞ | ≥ 1.5 |
+| **2** | **Volume** | volumeRatio | Volume/Moyenne (100 périodes) | 0-∞ | ≥ 2.0 |
 | **3** | **ATR** | atrRatio | Volatilité actuelle/moyenne | 0-∞ | 0.8-1.2 |
 | **4** | **Run** | directionalRun | Bougies consécutives (momentum) | 0-10 | ≥ 3 |
 | **5** | **Align** | alignmentScore | Nombre d'EMA alignées | 0-3 | 3 |
 | **6** | **Type** | marketType | Classification Bull/Bear/Range | -2 à +2 | ±2 |
-| **7** | **T1** | trend1 | Tendance EMA 20 (court terme) | -1/0/+1 | ±1 |
-| **8** | **T2** | trend2 | Tendance EMA 50 (moyen terme) | -1/0/+1 | ±1 |
-| **9** | **T3** | trend3 | Tendance EMA 100 (long terme) | -1/0/+1 | ±1 |
+| **7** | **Scalp** 🆕 | scalpQuality | Adapté scalping (1=oui, 0=non) | 0-1 | 1 |
+| **8** | **T1** | trend1 | Tendance EMA 20 (court terme) | -1/0/+1 | ±1 |
+| **9** | **T2** | trend2 | Tendance EMA 50 (moyen terme) | -1/0/+1 | ±1 |
+| **10** | **T3** | trend3 | Tendance EMA 100 (long terme) | -1/0/+1 | ±1 |
 
 **Condition de filtrage par défaut** : `Score >= 7`
+
+**🆕 Colonne Scalp (V3.1)** : Filtre automatique basé sur Volume ≥ 2.0x + Spread ≤ 0.3% + ATR ≤ 1.3x
 
 ---
 
@@ -114,12 +146,12 @@ La colonne **"Type"** (marketType) classe automatiquement chaque instrument :
 
 1. Ouvrez **ProRealTime**
 2. Menu **Outils** → **ProScreener** → **Nouveau Screener**
-3. Nommez-le : `Trading Quality V3.0`
+3. Nommez-le : `Trading Quality V3.1`
 
 ### Étape 2 : Copier le Code
 
 1. Ouvrez le fichier **`proscreener/trading_quality_metrics_v2_FINAL.prt`**
-2. **Copiez tout le contenu** (333 lignes)
+2. **Copiez tout le contenu** (352 lignes)
 3. **Collez** dans la fenêtre ProScreener
 
 ### Étape 3 : Configuration Recommandée
@@ -128,18 +160,19 @@ La colonne **"Type"** (marketType) classe automatiquement chaque instrument :
 |-----------|-------------------|-------------|
 | **Unité de temps** | **1 minute** | Optimal pour analyse intraday |
 | **Liste** | Votre watchlist | CAC40, NASDAQ100, Forex, Crypto |
-| **Condition** | `Score >= 7` | Déjà configuré (ligne 326) |
+| **Condition** | `Score >= 7` | Déjà configuré (ligne 345) |
 
 ### Étape 4 : Lancer le Scan
 
 1. Cliquez sur **Lancer le Screener**
-2. Les résultats s'affichent avec les 9 colonnes nommées :
+2. Les résultats s'affichent avec les 10 colonnes nommées :
    ```
-   Score | Volume | ATR | Run | Align | Type | T1 | T2 | T3
+   Score | Volume | ATR | Run | Align | Type | Scalp | T1 | T2 | T3
    ```
 3. **Triez par colonne** pour filtrer :
    - **Score** : Trier décroissant → meilleurs scores en haut
    - **Type** : Trier par valeur → regrouper bulls (+2, +1) et bears (-2, -1)
+   - **Scalp** : Trier décroissant → instruments scalping d'abord (1 = adapté)
    - **Volume** : Trier décroissant → plus forte liquidité d'abord
 
 ---
@@ -150,7 +183,7 @@ La colonne **"Type"** (marketType) classe automatiquement chaque instrument :
 
 **Affichage dans ProScreener** :
 ```
-Score: 12  | Volume: 2.3 | ATR: 1.0 | Run: 4 | Align: 3 | Type: +2 | T1: +1 | T2: +1 | T3: +1
+Score: 12  | Volume: 2.3 | ATR: 1.0 | Run: 4 | Align: 3 | Type: +2 | Scalp: 1 | T1: +1 | T2: +1 | T3: +1
 ```
 
 **Interprétation** :
@@ -160,11 +193,12 @@ Score: 12  | Volume: 2.3 | ATR: 1.0 | Run: 4 | Align: 3 | Type: +2 | T1: +1 | T2
 - 🟢 **Run 4** → 4 bougies haussières consécutives (momentum)
 - 🟢 **Align 3** → Toutes les EMA alignées
 - 🔥 **Type +2** → **BULL FORT confirmé**
+- ⚡ **Scalp 1** → **Adapté scalping** (liquidité + spread optimaux)
 - 🟢 **T1/T2/T3 = +1** → Toutes les tendances haussières
 
 **Action recommandée** : **ACHAT fort** avec SL serré
 **Probabilité** : Très élevée
-**Stratégie** : Momentum trading / Scalping haussier
+**Stratégie** : Momentum trading / Scalping haussier optimal
 
 ---
 
@@ -172,7 +206,7 @@ Score: 12  | Volume: 2.3 | ATR: 1.0 | Run: 4 | Align: 3 | Type: +2 | T1: +1 | T2
 
 **Affichage dans ProScreener** :
 ```
-Score: 8   | Volume: 0.7 | ATR: 1.8 | Run: 2 | Align: 1 | Type: 0  | T1: +1 | T2: -1 | T3: 0
+Score: 8   | Volume: 0.7 | ATR: 1.8 | Run: 2 | Align: 1 | Type: 0  | Scalp: 0 | T1: +1 | T2: -1 | T3: 0
 ```
 
 **Interprétation** :
@@ -182,10 +216,11 @@ Score: 8   | Volume: 0.7 | ATR: 1.8 | Run: 2 | Align: 1 | Type: 0  | T1: +1 | T2
 - 🟡 **Run 2** → Pas de momentum clair
 - 🔴 **Align 1** → Une seule EMA alignée
 - ⚠️ **Type 0** → **RANGE/Neutre, pas de direction**
+- ❌ **Scalp 0** → **Non adapté scalping** (volume faible + volatilité excessive)
 - ⚠️ **T1: +1, T2: -1, T3: 0** → Tendances contradictoires !
 
 **Action recommandée** : **ÉVITER** - Signaux contradictoires
-**Problème** : CT haussier vs MT baissier
+**Problème** : CT haussier vs MT baissier + mauvaises conditions scalping
 **Stratégie** : Attendre clarification du marché
 
 ---
@@ -194,7 +229,7 @@ Score: 8   | Volume: 0.7 | ATR: 1.8 | Run: 2 | Align: 1 | Type: 0  | T1: +1 | T2
 
 **Affichage dans ProScreener** :
 ```
-Score: 11  | Volume: 1.9 | ATR: 0.9 | Run: 5 | Align: 3 | Type: -2 | T1: -1 | T2: -1 | T3: -1
+Score: 11  | Volume: 1.9 | ATR: 0.9 | Run: 5 | Align: 3 | Type: -2 | Scalp: 0 | T1: -1 | T2: -1 | T3: -1
 ```
 
 **Interprétation** :
@@ -204,17 +239,42 @@ Score: 11  | Volume: 1.9 | ATR: 0.9 | Run: 5 | Align: 3 | Type: -2 | T1: -1 | T2
 - 🟢 **Run 5** → 5 bougies baissières consécutives (fort momentum)
 - 🟢 **Align 3** → Toutes les EMA alignées
 - 🔴 **Type -2** → **BEAR FORT confirmé**
+- 🟡 **Scalp 0** → Non adapté scalping (volume < 2.0x)
 - 🔴 **T1/T2/T3 = -1** → Toutes les tendances baissières
 
 **Action recommandée** : **VENTE/SHORT** avec confirmation
 **Probabilité** : Très élevée
-**Stratégie** : Momentum baissier / Short selling
+**Stratégie** : Momentum baissier / Position courte (non scalping)
 
 ---
 
 ## 💡 Stratégies d'Utilisation
 
-### 1. Trading de Momentum (Scalping/Intraday)
+### 1. 🆕 Scalping de Qualité (V3.1)
+
+**Objectif** : Scalping ultra-rapide avec conditions optimales
+
+**Filtres dans ProScreener** :
+- `Score >= 9`
+- `Scalp = 1` ⚡ **CRITÈRE CLÉ** (liquidité + spread + volatilité optimaux)
+- `Type = +2` (bull fort) OU `Type = -2` (bear fort)
+- `Run >= 3`
+
+**Entrée** :
+- Type +2 + Scalp 1 → Position **LONG** rapide
+- Type -2 + Scalp 1 → Position **SHORT** rapide
+
+**Stop-Loss** : Très serré (0.5 à 1.0 x ATR)
+**Take-Profit** : Rapide (1:1 ou 1:1.5 risk/reward)
+
+**Avantages Scalp = 1** :
+- Volume élevé → Exécution instantanée
+- Spread faible → Profit net maximisé
+- Volatilité maîtrisée → Stops précis
+
+---
+
+### 2. Trading de Momentum (Intraday)
 
 **Objectif** : Capturer les mouvements forts intraday
 
@@ -231,7 +291,7 @@ Score: 11  | Volume: 1.9 | ATR: 0.9 | Run: 5 | Align: 3 | Type: -2 | T1: -1 | T2
 
 ---
 
-### 2. Trading Directionnel Simplifié
+### 3. Trading Directionnel Simplifié
 
 **Objectif** : Ne trader que dans UN sens (LONG ou SHORT)
 
@@ -249,7 +309,7 @@ Score: 11  | Volume: 1.9 | ATR: 0.9 | Run: 5 | Align: 3 | Type: -2 | T1: -1 | T2
 
 ---
 
-### 3. Range Trading (Support/Résistance)
+### 4. Range Trading (Support/Résistance)
 
 **Objectif** : Profiter des oscillations en range
 
@@ -265,7 +325,7 @@ Score: 11  | Volume: 1.9 | ATR: 0.9 | Run: 5 | Align: 3 | Type: -2 | T1: -1 | T2
 
 ---
 
-### 4. Trading de Qualité Pure
+### 5. Trading de Qualité Pure
 
 **Objectif** : Trader uniquement les setups parfaits
 
@@ -281,7 +341,7 @@ Score: 11  | Volume: 1.9 | ATR: 0.9 | Run: 5 | Align: 3 | Type: -2 | T1: -1 | T2
 
 ---
 
-### 5. Gestion de Risque Dynamique
+### 6. Gestion de Risque Dynamique
 
 **Réduction de position selon ATR** :
 ```
@@ -299,7 +359,7 @@ Si ATR > 2.0 → Réduire taille position de 75%
 
 ## ⚙️ Paramètres Configurables
 
-Tous les paramètres sont dans le fichier `.prt` (lignes 27-34) :
+Tous les paramètres sont dans le fichier `.prt` (lignes 33-45) :
 
 ```prorealtime
 // === PARAMETRES ===
@@ -311,11 +371,16 @@ enableMTF = 1           // Multi-tendance ON/OFF (1/0)
 emaPeriod1 = 20         // EMA court terme (10-30)
 emaPeriod2 = 50         // EMA moyen terme (30-70)
 emaPeriod3 = 100        // EMA long terme (80-150)
+
+// === PARAMETRES SCALPING (V3.1) ===
+minVolumeScalping = 2.0     // Volume minimum pour scalping (2.0-3.0)
+maxSpreadScalping = 0.3     // Spread maximum pour scalping (0.2-0.5%)
+maxATRScalping = 1.3        // ATR maximum pour scalping (1.2-1.5)
 ```
 
 ### Ajuster le seuil de filtrage
 
-**Ligne 326** - Modifier le seuil Score :
+**Ligne 345** - Modifier le seuil Score :
 
 ```prorealtime
 condition = (qualityScore >= 7)  // Changer 7 pour filtrer +/- strict
@@ -326,15 +391,26 @@ condition = (qualityScore >= 7)  // Changer 7 pour filtrer +/- strict
 - `>= 5` → Plus permissif, beaucoup de résultats
 - `>= 11` → Ultra strict, perfection uniquement
 
+### Ajuster les critères scalping
+
+**Lignes 43-45** - Modifier les seuils scalping :
+
+```prorealtime
+minVolumeScalping = 2.0     // Augmenter à 3.0 pour être plus strict
+maxSpreadScalping = 0.3     // Réduire à 0.2 pour spreads plus serrés
+maxATRScalping = 1.3        // Réduire à 1.2 pour moins de volatilité
+```
+
 ### Personnaliser les noms de colonnes
 
-**Ligne 332** - Modifier les alias affichés :
+**Ligne 351** - Modifier les alias affichés :
 
 ```prorealtime
 SCREENER[condition](
   qualityScore AS "Score",      // Changer "Score" par autre nom
   volumeRatio AS "Volume",      // Changer "Volume" par "Vol"
   atrRatio AS "ATR",            // Changer "ATR" par "Volatilite"
+  scalpQuality AS "Scalp",      // Changer "Scalp" par "Scal"
   ...
 )
 ```
@@ -408,19 +484,26 @@ SCREENER[condition](
 **Optimal** : ±2 (bull fort ou bear fort)
 **Usage** : Filtrage directionnel rapide
 
-### 7. T1 - Tendance Court Terme
+### 7. 🆕 Scalp - Adapté Scalping (V3.1)
+**Variable** : `scalpQuality`
+**Calcul** : `volumeRatio >= 2.0 AND spreadRatio <= 0.3 AND atrRatio <= 1.3`
+**Valeurs** : 1 (adapté), 0 (non adapté)
+**Optimal** : 1
+**Usage** : Identifier instruments optimaux pour scalping
+
+### 8. T1 - Tendance Court Terme
 **Variable** : `trend1`
 **Calcul** : Comparaison `close` vs `EMA[20]`
 **Valeurs** : +1 (hausse), 0 (neutre), -1 (baisse)
 **Usage** : Réactivité court terme
 
-### 8. T2 - Tendance Moyen Terme
+### 9. T2 - Tendance Moyen Terme
 **Variable** : `trend2`
 **Calcul** : Comparaison `close` vs `EMA[50]`
 **Valeurs** : +1 (hausse), 0 (neutre), -1 (baisse)
 **Usage** : Confirmation médiane
 
-### 9. T3 - Tendance Long Terme
+### 10. T3 - Tendance Long Terme
 **Variable** : `trend3`
 **Calcul** : Comparaison `close` vs `EMA[100]`
 **Valeurs** : +1 (hausse), 0 (neutre), -1 (baisse)
@@ -483,10 +566,10 @@ SCREENER[condition](
 2. Filtrer par Type : Ajouter `AND ABS(marketType) >= 1`
 3. Réduire la watchlist : Sélectionner moins d'instruments
 
-### Problème : Erreur de syntaxe sur ligne 332
+### Problème : Erreur de syntaxe sur ligne 351
 
 **Solutions** :
-1. Vérifier que TOUT le code est copié (333 lignes)
+1. Vérifier que TOUT le code est copié (352 lignes)
 2. Vérifier qu'aucun caractère spécial n'est altéré
 3. Copier-coller à nouveau depuis le fichier source
 4. Vérifier version ProRealTime (V12+ requis pour alias AS)
@@ -513,17 +596,18 @@ SCREENER[condition](
 
 ### Fichiers du Projet
 
-1. **`trading_quality_metrics_v2_FINAL.prt`** (333 lignes)
-   - Code source ProScreener V3.0
+1. **`trading_quality_metrics_v2_FINAL.prt`** (352 lignes)
+   - Code source ProScreener V3.1
    - Alias personnalisés intégrés
+   - Critère scalping optimisé
 
 2. **`LEGENDE_CRITERES.md`**
-   - Documentation détaillée des 9 colonnes
+   - Documentation détaillée des 10 colonnes
    - Exemples concrets avec nouveaux noms
-   - Stratégies avancées
+   - Stratégies avancées incluant scalping
 
 3. **`README.md`** (ce fichier)
-   - Guide d'installation et utilisation V3
+   - Guide d'installation et utilisation V3.1
    - Vue d'ensemble complète du projet
 
 ### Ressources Externes
@@ -537,7 +621,36 @@ SCREENER[condition](
 
 ## 📜 Changelog
 
-### Version 3.0 (2025-10-26) - Actuelle ⭐ MAJEURE
+### Version 3.1 (2025-10-26) - Actuelle ⭐ SCALPING
+
+**🆕 MODE SCALPING : Filtre Liquidité/Spread/Volatilité**
+- ✅ **Nouvelle colonne "Scalp"** : Critère 1/0 pour scalping de qualité
+- ✅ **10 colonnes** : Score, Volume, ATR, Run, Align, Type, Scalp, T1, T2, T3
+- ✅ **3 critères scalping** : Volume ≥ 2.0x, Spread ≤ 0.3%, ATR ≤ 1.3x
+- ✅ **Paramètres ajustables** : minVolumeScalping, maxSpreadScalping, maxATRScalping
+- ✅ **Stratégie dédiée** : Section scalping dans les stratégies
+
+**Impact scalpers** :
+- ⚡ Identification instantanée des instruments adaptés
+- 💰 Coûts minimisés (spread faible)
+- 🎯 Exécution optimale (volume élevé)
+- 📊 Risque maîtrisé (volatilité contrôlée)
+
+**Changements techniques** :
+```prorealtime
+// V3.1 - Ajout critère scalping
+scalpQuality = 0
+IF volumeRatio >= minVolumeScalping AND spreadRatio <= maxSpreadScalping AND atrRatio <= maxATRScalping THEN
+    scalpQuality = 1
+ENDIF
+
+// V3.1 - 10 colonnes au lieu de 9
+SCREENER[condition](..., scalpQuality AS "Scalp", ...)
+```
+
+---
+
+### Version 3.0 (2025-10-26) - MAJEURE
 
 **🎉 RÉVOLUTION : Colonnes Personnalisées**
 - ✅ **Alias AS fonctionnels** : Noms personnalisés dans ProScreener
@@ -674,33 +787,41 @@ Améliorations bienvenues ! Idées :
 
 ## 🏆 Résumé Rapide (TL;DR)
 
-**Ce que fait le screener V3** :
+**Ce que fait le screener V3.1** :
 - ✅ Calcule un score de qualité 0-13 pour chaque instrument
 - ✅ Classe automatiquement : Bull Fort/Modéré, Bear Fort/Modéré, Range/Neutre
-- ✅ Affiche 9 colonnes avec **noms personnalisés lisibles**
-- ✅ Interface professionnelle : **Score | Volume | ATR | Run | Align | Type | T1 | T2 | T3**
+- ✅ Affiche 10 colonnes avec **noms personnalisés lisibles**
+- ✅ Interface professionnelle : **Score | Volume | ATR | Run | Align | Type | Scalp | T1 | T2 | T3**
+- ✅ 🆕 **Filtre scalping** : Identifie instruments adaptés (liquidité + spread + volatilité)
 
 **Comment l'utiliser** :
 1. Copier le code `.prt` dans ProScreener
 2. Lancer sur timeframe **1 minute**
 3. Trier par **Score** (colonne 1) décroissant
 4. Filtrer par **Type** (colonne 6) selon stratégie
+5. 🆕 Filtrer par **Scalp = 1** (colonne 7) pour scalping optimal
 
 **Meilleures pratiques** :
 - 🎯 **Score ≥ 10** + **Type = ±2** → Signaux les plus fiables
+- ⚡ 🆕 **Scalp = 1** → Conditions optimales pour scalping
 - ⚠️ **Type = 0** → Éviter ou faire du range trading
 - 📊 Combiner avec analyse technique classique (S/R, patterns)
 - 💰 Gestion de risque stricte (max 1-2% par trade)
 
-**Nouveauté V3** :
+**Nouveauté V3.1** :
+- 🆕 **Filtre Scalping** : Colonne "Scalp" pour identifier les meilleurs instruments
+- ⚡ **Critères optimisés** : Volume 2x + Spread 0.3% + ATR 1.3x
+- 🎯 **10 colonnes** : Une de plus pour le scalping
+
+**Historique V3.0** :
 - 🆕 **Colonnes nommées** : Fini les noms de variables techniques !
 - ⚡ **Interface claire** : Compréhension immédiate
 - 🚀 **Testé et validé** : Fonctionne parfaitement
 
 ---
 
-**Version**: 3.0
-**Date**: 2025-10-26
+**Version**: 3.1
+**Date**: 2025-10-27
 **Compatibilité**: ProRealTime V12+ / ProScreener
 **Auteur**: Script généré avec Claude Code
 **Licence**: Éducatif - Utilisez à vos propres risques
@@ -724,8 +845,11 @@ Améliorations bienvenues ! Idées :
 | 4 | **Run** | directionalRun | Momentum | ≥ 3 |
 | 5 | **Align** | alignmentScore | Cohérence tendances | 3 |
 | 6 | **Type** | marketType | Bull/Bear/Range | ±2 |
-| 7 | **T1** | trend1 | Court terme | ±1 |
-| 8 | **T2** | trend2 | Moyen terme | ±1 |
-| 9 | **T3** | trend3 | Long terme | ±1 |
+| 7 | **Scalp** 🆕 | scalpQuality | Adapté scalping | 1 |
+| 8 | **T1** | trend1 | Court terme | ±1 |
+| 9 | **T2** | trend2 | Moyen terme | ±1 |
+| 10 | **T3** | trend3 | Long terme | ±1 |
 
-**Signal idéal** : `Score: 12 | Volume: 2.0 | ATR: 1.0 | Run: 4 | Align: 3 | Type: ±2 | T1/T2/T3: ±1`
+**Signal idéal** : `Score: 12 | Volume: 2.0 | ATR: 1.0 | Run: 4 | Align: 3 | Type: ±2 | Scalp: 1 | T1/T2/T3: ±1`
+
+**Signal idéal SCALPING** : `Score: 11+ | Volume: 2.0+ | ATR: 0.9-1.1 | Run: 3+ | Type: ±2 | Scalp: 1`

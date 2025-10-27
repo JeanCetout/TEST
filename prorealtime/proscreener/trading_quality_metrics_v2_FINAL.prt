@@ -1,27 +1,32 @@
 // ============================================================================
-// ProScreener V3.0 - Metriques de Trading avec Colonnes Personnalisees
+// ProScreener V3.1 - Mode Scalping avec Filtre Liquidite/Spread
 // ============================================================================
 // Compatible: ProRealTime V12+
 // Timeframe recommande: 1 minute
 // Auteur: Generated with Claude Code
 // Date: 2025-10-26
-// Version: 3.0 - ALIAS PERSONNALISES DANS SCREENER
+// Version: 3.1 - AJOUT CRITERE SCALPING
 //
-// COLONNES SCREENER (9 colonnes avec noms personnalises):
-// ---------------------------------------------------------
+// COLONNES SCREENER (10 colonnes avec noms personnalises):
+// ----------------------------------------------------------
 // Colonne 1: "Score"   - Score global de qualite (0-13)
 // Colonne 2: "Volume"  - Volume/Moyenne (liquidite)
 // Colonne 3: "ATR"     - Volatilite actuelle/moyenne
 // Colonne 4: "Run"     - Bougies consecutives (momentum)
 // Colonne 5: "Align"   - EMA alignees (0-3)
 // Colonne 6: "Type"    - Classification Bull/Bear/Range (-2 a +2)
-// Colonne 7: "T1"      - Tendance EMA 20 court terme (-1/0/+1)
-// Colonne 8: "T2"      - Tendance EMA 50 moyen terme (-1/0/+1)
-// Colonne 9: "T3"      - Tendance EMA 100 long terme (-1/0/+1)
+// Colonne 7: "Scalp"   - Adapte scalping (1=oui, 0=non) NEW V3.1
+// Colonne 8: "T1"      - Tendance EMA 20 court terme (-1/0/+1)
+// Colonne 9: "T2"      - Tendance EMA 50 moyen terme (-1/0/+1)
+// Colonne 10: "T3"     - Tendance EMA 100 long terme (-1/0/+1)
 //
 // LEGENDE Type (marketType):
 // +2 = Bull Fort | +1 = Bull Modere | 0 = Range/Neutre
 // -1 = Bear Modere | -2 = Bear Fort
+//
+// LEGENDE Scalp (scalpQuality):
+// 1 = Adapte scalping (volume eleve + spread faible + volatilite OK)
+// 0 = Non adapte scalping (criteres non remplis)
 // ============================================================================
 
 // === PARAMETRES ===
@@ -33,6 +38,11 @@ enableMTF = 1
 emaPeriod1 = 20
 emaPeriod2 = 50
 emaPeriod3 = 100
+
+// === PARAMETRES SCALPING (V3.1) ===
+minVolumeScalping = 2.0     // Volume minimum pour scalping (x fois moyenne)
+maxSpreadScalping = 0.3     // Spread maximum pour scalping (% du prix)
+maxATRScalping = 1.3        // ATR maximum pour limiter volatilite excessive
 
 // === 1. VOLUME ===
 volumeAverage = AVERAGE[lookbackPeriod](volume)
@@ -322,12 +332,20 @@ IF enableMTF = 1 THEN
     ENDIF
 ENDIF
 
-// === 12. CONDITION ===
+// === 12. CRITERE SCALPING (V3.1) ===
+// Determine si l'instrument est adapte au scalping
+// Criteres: Volume eleve + Spread faible + Volatilite maitrisee
+scalpQuality = 0
+IF volumeRatio >= minVolumeScalping AND spreadRatio <= maxSpreadScalping AND atrRatio <= maxATRScalping THEN
+    scalpQuality = 1
+ENDIF
+
+// === 13. CONDITION ===
 // Filtre: Affiche uniquement les instruments avec score >= 7
 condition = (qualityScore >= 7)
 
-// === 13. SCREENER - SORTIE (9 COLONNES AVEC ALIAS) ===
-// Tentative d'affichage avec noms personnalises (alias AS)
+// === 14. SCREENER - SORTIE (10 COLONNES AVEC ALIAS) ===
+// Affichage avec noms personnalises (alias AS)
 // Col1=Score, Col2=Volume, Col3=ATR, Col4=Run, Col5=Align,
-// Col6=Type, Col7=T1, Col8=T2, Col9=T3
-SCREENER[condition](qualityScore AS "Score", volumeRatio AS "Volume", atrRatio AS "ATR", directionalRun AS "Run", alignmentScore AS "Align", marketType AS "Type", trend1 AS "T1", trend2 AS "T2", trend3 AS "T3")
+// Col6=Type, Col7=Scalp (NEW V3.1), Col8=T1, Col9=T2, Col10=T3
+SCREENER[condition](qualityScore AS "Score", volumeRatio AS "Volume", atrRatio AS "ATR", directionalRun AS "Run", alignmentScore AS "Align", marketType AS "Type", scalpQuality AS "Scalp", trend1 AS "T1", trend2 AS "T2", trend3 AS "T3")
