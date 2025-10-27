@@ -1,0 +1,390 @@
+// ============================================================================
+// ProScreener V4.0 - SpeedMeter: Mesure de Vitesse des Mouvements
+// ============================================================================
+// Compatible: ProRealTime V12+
+// Timeframe recommande: 1, 5, 10 minutes (scalping)
+// Auteur: Generated with Claude Code
+// Date: 2025-10-27
+// Version: 4.0 - AJOUT SPEEDMETER
+//
+// COLONNES SCREENER (11 colonnes avec noms personnalises):
+// ----------------------------------------------------------
+// Colonne 1: "Score"   - Score global de qualite (0-13)
+// Colonne 2: "Volume"  - Volume/Moyenne (liquidite)
+// Colonne 3: "ATR"     - Volatilite actuelle/moyenne
+// Colonne 4: "Run"     - Bougies consecutives (momentum)
+// Colonne 5: "Align"   - EMA alignees (0-3)
+// Colonne 6: "Type"    - Classification Bull/Bear/Range (-2 a +2)
+// Colonne 7: "Speed"   - Vitesse des mouvements (0-∞) NEW V4.0
+// Colonne 8: "Scalp"   - Adapte scalping (1=oui, 0=non)
+// Colonne 9: "T1"      - Tendance EMA 20 court terme (-1/0/+1)
+// Colonne 10: "T2"     - Tendance EMA 50 moyen terme (-1/0/+1)
+// Colonne 11: "T3"     - Tendance EMA 100 long terme (-1/0/+1)
+//
+// LEGENDE Type (marketType):
+// +2 = Bull Fort | +1 = Bull Modere | 0 = Range/Neutre
+// -1 = Bear Modere | -2 = Bear Fort
+//
+// LEGENDE Scalp (scalpQuality):
+// 1 = Adapte scalping (volume eleve + spread faible + volatilite OK)
+// 0 = Non adapte scalping (criteres non remplis)
+//
+// LEGENDE Speed (speedMeter) - NEW V4.0:
+// >= 2.5 = Tres rapide (excellent pour scalping)
+// 2.0-2.5 = Rapide (bon pour scalping)
+// 1.5-2.0 = Moyen (acceptable)
+// < 1.5 = Lent (eviter pour scalping)
+// ============================================================================
+
+// === PARAMETRES ===
+lookbackPeriod = 100
+atrPeriod = 14
+minBodyRatio = 0.5
+minVolRatio = 1.0
+enableMTF = 1
+emaPeriod1 = 20
+emaPeriod2 = 50
+emaPeriod3 = 100
+
+// === PARAMETRES SCALPING (V3.1) ===
+minVolumeScalping = 2.0     // Volume minimum pour scalping (x fois moyenne)
+maxSpreadScalping = 0.3     // Spread maximum pour scalping (% du prix)
+maxATRScalping = 1.3        // ATR maximum pour limiter volatilite excessive
+
+// === PARAMETRES SPEEDMETER (V4.0) ===
+velocityPeriod = 20         // Periode pour calculer vitesse moyenne
+minSpeedScalping = 1.8      // Speed minimum pour scalping rapide
+
+// === 1. VOLUME ===
+volumeAverage = AVERAGE[lookbackPeriod](volume)
+IF volumeAverage > 0 THEN
+    volumeRatio = volume / volumeAverage
+ELSE
+    volumeRatio = 0
+ENDIF
+highVolume = (volumeRatio >= minVolRatio)
+
+// === 2. SPREAD ===
+IF close > 0 THEN
+    spreadRatio = ((high - low) / close) * 100
+ELSE
+    spreadRatio = 0
+ENDIF
+avgSpread = AVERAGE[lookbackPeriod](spreadRatio)
+lowSpread = (spreadRatio < avgSpread)
+
+// === 3. ATR ===
+atrValue = AverageTrueRange[atrPeriod](close)
+atrAverage = AVERAGE[lookbackPeriod](atrValue)
+IF atrAverage > 0 THEN
+    atrRatio = atrValue / atrAverage
+ELSE
+    atrRatio = 0
+ENDIF
+
+// === 4. CORPS BOUGIE ===
+bodySize = ABS(close - open)
+candleRange = high - low
+IF candleRange > 0 THEN
+    bodyWickRatio = bodySize / candleRange
+ELSE
+    bodyWickRatio = 0
+ENDIF
+strongBody = (bodyWickRatio >= minBodyRatio)
+
+// === 5. CHEVAUCHEMENT ===
+currentBodyHigh = MAX(close, open)
+currentBodyLow = MIN(close, open)
+prevBodyHigh = MAX(close[1], open[1])
+prevBodyLow = MIN(close[1], open[1])
+overlapHigh = MIN(currentBodyHigh, prevBodyHigh)
+overlapLow = MAX(currentBodyLow, prevBodyLow)
+overlapSize = MAX(0, overlapHigh - overlapLow)
+prevBodySize = ABS(close[1] - open[1])
+IF prevBodySize > 0 THEN
+    bodyOverlapPercent = (overlapSize / prevBodySize) * 100
+ELSE
+    bodyOverlapPercent = 0
+ENDIF
+
+// === 6. RUN DIRECTIONNEL ===
+bullishRun = 0
+FOR i = 0 TO 9 DO
+    IF close[i] > open[i] THEN
+        bullishRun = bullishRun + 1
+    ELSE
+        BREAK
+    ENDIF
+NEXT
+
+bearishRun = 0
+FOR i = 0 TO 9 DO
+    IF close[i] < open[i] THEN
+        bearishRun = bearishRun + 1
+    ELSE
+        BREAK
+    ENDIF
+NEXT
+
+directionalRun = MAX(bullishRun, bearishRun)
+hasDirectionalRun = (directionalRun >= 3)
+
+// === 7. VWAP ===
+ONCE sumPV = 0
+ONCE sumV = 0
+ONCE startVWAP = 0
+
+IF dayofweek <> dayofweek[1] THEN
+    sumPV = 0
+    sumV = 0
+    startVWAP = 1
+ENDIF
+
+IF startVWAP = 0 THEN
+    startVWAP = 1
+ENDIF
+
+sumPV = sumPV + (close * volume)
+sumV = sumV + volume
+
+IF sumV > 0 THEN
+    vwap = sumPV / sumV
+ELSE
+    vwap = close
+ENDIF
+
+IF vwap > 0 THEN
+    vwapDistance = ((close - vwap) / vwap) * 100
+ELSE
+    vwapDistance = 0
+ENDIF
+
+respectsVWAP = (ABS(vwapDistance) <= 0.5)
+
+// === 8. SLIPPAGE ===
+IF close > 0 THEN
+    atrPercent = (atrValue / close) * 100
+ELSE
+    atrPercent = 0
+ENDIF
+
+IF atrPercent > 0 THEN
+    slippageRatio = spreadRatio / atrPercent
+ELSE
+    slippageRatio = 0
+ENDIF
+lowSlippage = (slippageRatio < 0.1)
+
+// === 9. REGULARITE ===
+volumeStdDev = STD[20](volume)
+IF volumeAverage > 0 THEN
+    volumeCV = volumeStdDev / volumeAverage
+ELSE
+    volumeCV = 0
+ENDIF
+regularFlow = (volumeCV < 0.5)
+
+// === 10. MULTI-TENDANCE ===
+IF enableMTF = 1 THEN
+    ema1 = ExponentialAverage[emaPeriod1](close)
+    ema2 = ExponentialAverage[emaPeriod2](close)
+    ema3 = ExponentialAverage[emaPeriod3](close)
+
+    IF close > ema1 THEN
+        trend1 = 1
+    ELSE
+        IF close < ema1 THEN
+            trend1 = -1
+        ELSE
+            trend1 = 0
+        ENDIF
+    ENDIF
+
+    IF close > ema2 THEN
+        trend2 = 1
+    ELSE
+        IF close < ema2 THEN
+            trend2 = -1
+        ELSE
+            trend2 = 0
+        ENDIF
+    ENDIF
+
+    IF close > ema3 THEN
+        trend3 = 1
+    ELSE
+        IF close < ema3 THEN
+            trend3 = -1
+        ELSE
+            trend3 = 0
+        ENDIF
+    ENDIF
+
+    bullishAlign = 0
+    IF trend1 = 1 THEN
+        bullishAlign = bullishAlign + 1
+    ENDIF
+    IF trend2 = 1 THEN
+        bullishAlign = bullishAlign + 1
+    ENDIF
+    IF trend3 = 1 THEN
+        bullishAlign = bullishAlign + 1
+    ENDIF
+
+    bearishAlign = 0
+    IF trend1 = -1 THEN
+        bearishAlign = bearishAlign + 1
+    ENDIF
+    IF trend2 = -1 THEN
+        bearishAlign = bearishAlign + 1
+    ENDIF
+    IF trend3 = -1 THEN
+        bearishAlign = bearishAlign + 1
+    ENDIF
+
+    alignmentScore = MAX(bullishAlign, bearishAlign)
+
+    trendAligned = (bullishAlign = 3) OR (bearishAlign = 3)
+    trendPartialAlign = (bullishAlign >= 2) OR (bearishAlign >= 2)
+
+    IF ema1 > 0 THEN
+        strength1 = ABS((close - ema1) / ema1) * 100
+    ELSE
+        strength1 = 0
+    ENDIF
+    IF ema2 > 0 THEN
+        strength2 = ABS((close - ema2) / ema2) * 100
+    ELSE
+        strength2 = 0
+    ENDIF
+    IF ema3 > 0 THEN
+        strength3 = ABS((close - ema3) / ema3) * 100
+    ELSE
+        strength3 = 0
+    ENDIF
+
+    avgStrength = (strength1 + strength2 + strength3) / 3
+    strongAlign = (trendAligned AND avgStrength > 0.5)
+    moderateAlign = (trendPartialAlign AND avgStrength > 0.3)
+
+    // Classification du type de marche
+    IF bullishAlign = 3 THEN
+        marketType = 2
+    ELSE
+        IF bullishAlign >= 2 THEN
+            marketType = 1
+        ELSE
+            IF bearishAlign = 3 THEN
+                marketType = -2
+            ELSE
+                IF bearishAlign >= 2 THEN
+                    marketType = -1
+                ELSE
+                    marketType = 0
+                ENDIF
+            ENDIF
+        ENDIF
+    ENDIF
+
+ELSE
+    trend1 = 0
+    trend2 = 0
+    trend3 = 0
+    alignmentScore = 0
+    strongAlign = 0
+    moderateAlign = 0
+    marketType = 0
+ENDIF
+
+// === 11. SCORE GLOBAL ===
+qualityScore = 0
+
+IF highVolume THEN
+    qualityScore = qualityScore + 1
+ENDIF
+IF lowSpread THEN
+    qualityScore = qualityScore + 1
+ENDIF
+IF strongBody THEN
+    qualityScore = qualityScore + 1
+ENDIF
+IF hasDirectionalRun THEN
+    qualityScore = qualityScore + 1
+ENDIF
+IF respectsVWAP THEN
+    qualityScore = qualityScore + 1
+ENDIF
+IF lowSlippage THEN
+    qualityScore = qualityScore + 1
+ENDIF
+IF regularFlow THEN
+    qualityScore = qualityScore + 1
+ENDIF
+IF atrRatio >= 0.8 AND atrRatio <= 1.2 THEN
+    qualityScore = qualityScore + 1
+ENDIF
+IF bodyOverlapPercent >= 30 AND bodyOverlapPercent <= 70 THEN
+    qualityScore = qualityScore + 1
+ENDIF
+IF volumeRatio >= 1.5 THEN
+    qualityScore = qualityScore + 1
+ENDIF
+
+IF enableMTF = 1 THEN
+    IF strongAlign THEN
+        qualityScore = qualityScore + 2
+    ELSE
+        IF moderateAlign THEN
+            qualityScore = qualityScore + 1
+        ENDIF
+    ENDIF
+    IF avgStrength > 1.0 THEN
+        qualityScore = qualityScore + 1
+    ENDIF
+ENDIF
+
+// === 12. SPEEDMETER (V4.0) - MESURE DE VITESSE ===
+// Combinaison de velocity (vitesse du prix) et tick activity (volume)
+// SpeedMeter eleve = Mouvements rapides + Volume eleve = Ideal scalping
+
+// Calcul de la velocite du prix (mouvement actuel)
+priceVelocity = ABS(close - open)
+
+// Calcul de la velocite moyenne sur les N dernieres bougies
+sumVelocity = 0
+FOR i = 1 TO velocityPeriod DO
+    sumVelocity = sumVelocity + ABS(close[i] - open[i])
+NEXT
+avgVelocity = sumVelocity / velocityPeriod
+
+// Ratio de velocite (vitesse relative)
+IF avgVelocity > 0 THEN
+    velocityRatio = priceVelocity / avgVelocity
+ELSE
+    velocityRatio = 0
+ENDIF
+
+// Tick Activity = Volume Ratio (deja calcule)
+tickActivity = volumeRatio
+
+// SpeedMeter final: Moyenne de velocity et tick activity
+// >= 2.5 = Tres rapide | 2.0-2.5 = Rapide | 1.5-2.0 = Moyen | < 1.5 = Lent
+speedMeter = (velocityRatio + tickActivity) / 2
+
+// === 13. CRITERE SCALPING (V3.1) ===
+// Determine si l'instrument est adapte au scalping
+// Criteres: Volume eleve + Spread faible + Volatilite maitrisee
+scalpQuality = 0
+IF volumeRatio >= minVolumeScalping AND spreadRatio <= maxSpreadScalping AND atrRatio <= maxATRScalping THEN
+    scalpQuality = 1
+ENDIF
+
+// === 14. CONDITION ===
+// Filtre: Affiche uniquement les instruments avec score >= 7
+condition = (qualityScore >= 7)
+
+// === 15. SCREENER - SORTIE (11 COLONNES AVEC ALIAS) ===
+// Affichage avec noms personnalises (alias AS)
+// Col1=Score, Col2=Volume, Col3=ATR, Col4=Run, Col5=Align,
+// Col6=Type, Col7=Speed (NEW V4.0), Col8=Scalp, Col9=T1, Col10=T2, Col11=T3
+SCREENER[condition](qualityScore AS "Score", volumeRatio AS "Volume", atrRatio AS "ATR", directionalRun AS "Run", alignmentScore AS "Align", marketType AS "Type", speedMeter AS "Speed", scalpQuality AS "Scalp", trend1 AS "T1", trend2 AS "T2", trend3 AS "T3")
