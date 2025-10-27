@@ -1,63 +1,62 @@
-# 📊 ProRealTime Trading Quality Metrics - Version 2.2
+# 📊 ProRealTime Trading Quality Metrics - Version 3.0
 
-**Screener ProRealTime avancé pour analyser la qualité de trading et classifier automatiquement les types de marchés (Bull/Bear/Range).**
+**Screener ProRealTime avancé avec colonnes personnalisées pour analyser la qualité de trading et classifier automatiquement les marchés (Bull/Bear/Range).**
 
-[![Version](https://img.shields.io/badge/version-2.2-blue.svg)](https://github.com)
+[![Version](https://img.shields.io/badge/version-3.0-brightgreen.svg)](https://github.com)
 [![ProRealTime](https://img.shields.io/badge/ProRealTime-V12%2B-green.svg)](https://www.prorealtime.com)
 [![License](https://img.shields.io/badge/license-Educational-orange.svg)](https://github.com)
+[![Tested](https://img.shields.io/badge/status-Tested%20%26%20Working-success.svg)](https://github.com)
+
+---
+
+## 🆕 NOUVEAUTÉ VERSION 3.0
+
+### ✨ Colonnes Personnalisées dans ProScreener
+
+**AVANT (V2.x)** : Les colonnes affichaient des noms de variables techniques
+```
+qualityScore | volumeRatio | atrRatio | directionalRun | ...
+```
+
+**MAINTENANT (V3.0)** : Les colonnes affichent des noms clairs et lisibles
+```
+Score | Volume | ATR | Run | Align | Type | T1 | T2 | T3
+```
+
+**Impact** : Interface ultra-lisible, compréhension immédiate, utilisation professionnelle ! 🚀
 
 ---
 
 ## 🎯 Qu'est-ce que ce screener fait ?
 
-Ce **ProScreener** analyse en temps réel la qualité de trading de vos instruments financiers et vous aide à :
+Ce **ProScreener V3** analyse en temps réel la qualité de trading de vos instruments financiers et vous aide à :
 
 ✅ **Identifier les meilleures opportunités** grâce à un score de qualité sur 13 points
 ✅ **Classifier automatiquement le type de marché** (Bull Fort/Modéré, Bear Fort/Modéré, Range/Neutre)
-✅ **Analyser 10 métriques techniques** (volume, volatilité, momentum, VWAP, slippage, etc.)
+✅ **Analyser 10 métriques techniques** (volume, volatilité, momentum, VWAP, slippage, régularité)
 ✅ **Détecter l'alignement des tendances** sur 3 timeframes (court/moyen/long terme)
 ✅ **Filtrer rapidement** selon votre stratégie (LONG, SHORT, ou RANGE trading)
+✅ **Afficher des colonnes lisibles** avec noms personnalisés (Score, Volume, ATR, Run, etc.)
 
 ---
 
-## 🆕 Nouveautés Version 2.1
+## 📋 Les 9 Colonnes Affichées
 
-### Critère `marketType` - Classification Bull/Bear/Range
+Le screener affiche **9 colonnes nommées** dans ProRealTime :
 
-Le screener classe désormais **automatiquement** chaque instrument selon 5 catégories :
+| # | Colonne Affichée | Nom Variable | Description | Plage | Optimal |
+|---|------------------|--------------|-------------|-------|---------|
+| **1** | **Score** | qualityScore | Score global de qualité | 0-13 | ≥ 10 |
+| **2** | **Volume** | volumeRatio | Volume/Moyenne (100 périodes) | 0-∞ | ≥ 1.5 |
+| **3** | **ATR** | atrRatio | Volatilité actuelle/moyenne | 0-∞ | 0.8-1.2 |
+| **4** | **Run** | directionalRun | Bougies consécutives (momentum) | 0-10 | ≥ 3 |
+| **5** | **Align** | alignmentScore | Nombre d'EMA alignées | 0-3 | 3 |
+| **6** | **Type** | marketType | Classification Bull/Bear/Range | -2 à +2 | ±2 |
+| **7** | **T1** | trend1 | Tendance EMA 20 (court terme) | -1/0/+1 | ±1 |
+| **8** | **T2** | trend2 | Tendance EMA 50 (moyen terme) | -1/0/+1 | ±1 |
+| **9** | **T3** | trend3 | Tendance EMA 100 (long terme) | -1/0/+1 | ±1 |
 
-| Valeur | Classification | Signification | Utilisation |
-|--------|----------------|---------------|-------------|
-| **+2** | 🔥 **Bull Fort** | Toutes les EMA haussières | Position LONG privilégiée |
-| **+1** | 🟢 **Bull Modéré** | 2+ EMA haussières | Position LONG possible |
-| **0** | ⚪ **Range/Neutre** | Tendances mixtes | Range trading ou attente |
-| **-1** | 🟠 **Bear Modéré** | 2+ EMA baissières | Position SHORT possible |
-| **-2** | 🔴 **Bear Fort** | Toutes les EMA baissières | Position SHORT privilégiée |
-
-**Filtrage ultra-rapide** :
-- `marketType >= +1` → Affiche uniquement les marchés haussiers
-- `marketType <= -1` → Affiche uniquement les marchés baissiers
-- `marketType = 0` → Marchés en range (stratégies support/résistance)
-
----
-
-## 📋 Les 9 Critères Affichés
-
-Le screener affiche **9 colonnes** dans ProRealTime :
-
-| # | Critère | Description | Plage | Optimal |
-|---|---------|-------------|-------|---------|
-| **1** | `qualityScore` | Score global de qualité | 0-13 | ≥ 10 |
-| **2** | `volumeRatio` | Volume/Moyenne (100 périodes) | 0-∞ | ≥ 1.5 |
-| **3** | `atrRatio` | Volatilité actuelle/moyenne | 0-∞ | 0.8-1.2 |
-| **4** | `directionalRun` | Bougies consécutives même direction | 0-10 | ≥ 3 |
-| **5** | `alignmentScore` | Nombre d'EMA alignées | 0-3 | 3 |
-| **6** | `marketType` | **🆕 Bull/Bear/Range** | -2 à +2 | ±2 |
-| **7** | `trend1` | Tendance EMA 20 (court terme) | -1/0/+1 | ±1 |
-| **8** | `trend2` | Tendance EMA 50 (moyen terme) | -1/0/+1 | ±1 |
-| **9** | `trend3` | Tendance EMA 100 (long terme) | -1/0/+1 | ±1 |
-
-**Condition de filtrage par défaut** : `qualityScore >= 7`
+**Condition de filtrage par défaut** : `Score >= 7`
 
 ---
 
@@ -86,6 +85,25 @@ Le screener affiche **9 colonnes** dans ProRealTime :
 
 ---
 
+## 📊 Classification Type de Marché
+
+La colonne **"Type"** (marketType) classe automatiquement chaque instrument :
+
+| Valeur | Badge | Classification | Signification | Utilisation |
+|--------|-------|----------------|---------------|-------------|
+| **+2** | 🔥 | **Bull Fort** | Toutes les EMA haussières | Position LONG privilégiée |
+| **+1** | 🟢 | **Bull Modéré** | 2+ EMA haussières | Position LONG possible |
+| **0** | ⚪ | **Range/Neutre** | Tendances mixtes | Range trading ou attente |
+| **-1** | 🟠 | **Bear Modéré** | 2+ EMA baissières | Position SHORT possible |
+| **-2** | 🔴 | **Bear Fort** | Toutes les EMA baissières | Position SHORT privilégiée |
+
+**Filtrage ultra-rapide** :
+- `Type >= +1` → Affiche uniquement les marchés haussiers
+- `Type <= -1` → Affiche uniquement les marchés baissiers
+- `Type = 0` → Marchés en range (stratégies support/résistance)
+
+---
+
 ## 🚀 Installation et Utilisation
 
 ### Prérequis
@@ -96,12 +114,12 @@ Le screener affiche **9 colonnes** dans ProRealTime :
 
 1. Ouvrez **ProRealTime**
 2. Menu **Outils** → **ProScreener** → **Nouveau Screener**
-3. Nommez-le : `Trading Quality V2.1`
+3. Nommez-le : `Trading Quality V3.0`
 
 ### Étape 2 : Copier le Code
 
 1. Ouvrez le fichier **`proscreener/trading_quality_metrics_v2_FINAL.prt`**
-2. **Copiez tout le contenu** (308 lignes)
+2. **Copiez tout le contenu** (333 lignes)
 3. **Collez** dans la fenêtre ProScreener
 
 ### Étape 3 : Configuration Recommandée
@@ -110,15 +128,19 @@ Le screener affiche **9 colonnes** dans ProRealTime :
 |-----------|-------------------|-------------|
 | **Unité de temps** | **1 minute** | Optimal pour analyse intraday |
 | **Liste** | Votre watchlist | CAC40, NASDAQ100, Forex, Crypto |
-| **Condition** | `qualityScore >= 7` | Déjà configuré (ligne 304) |
+| **Condition** | `Score >= 7` | Déjà configuré (ligne 326) |
 
 ### Étape 4 : Lancer le Scan
 
 1. Cliquez sur **Lancer le Screener**
-2. Les résultats s'affichent avec les 9 colonnes
+2. Les résultats s'affichent avec les 9 colonnes nommées :
+   ```
+   Score | Volume | ATR | Run | Align | Type | T1 | T2 | T3
+   ```
 3. **Triez par colonne** pour filtrer :
-   - Colonne 1 (qualityScore) : Trier décroissant → meilleurs scores
-   - Colonne 6 (marketType) : Trier par valeur → regrouper bulls/bears
+   - **Score** : Trier décroissant → meilleurs scores en haut
+   - **Type** : Trier par valeur → regrouper bulls (+2, +1) et bears (-2, -1)
+   - **Volume** : Trier décroissant → plus forte liquidité d'abord
 
 ---
 
@@ -126,64 +148,67 @@ Le screener affiche **9 colonnes** dans ProRealTime :
 
 ### Exemple 1 : Signal d'Achat Optimal ⭐⭐⭐
 
+**Affichage dans ProScreener** :
 ```
-1. qualityScore:     12/13    → Excellente qualité
-2. volumeRatio:      2.3      → Volume x2.3 (forte participation)
-3. atrRatio:         1.0      → Volatilité normale
-4. directionalRun:   4        → 4 bougies haussières consécutives
-5. alignmentScore:   3        → Toutes les EMA alignées
-6. marketType:       +2       → BULL FORT confirmé ✅
-7. trend1:           +1       → Court terme haussier
-8. trend2:           +1       → Moyen terme haussier
-9. trend3:           +1       → Long terme haussier
+Score: 12  | Volume: 2.3 | ATR: 1.0 | Run: 4 | Align: 3 | Type: +2 | T1: +1 | T2: +1 | T3: +1
 ```
 
 **Interprétation** :
-- 🟢 **Action** : **ACHAT fort** avec SL serré
-- 🎯 **Probabilité** : Très élevée (score 12/13 + toutes tendances alignées)
-- 📊 **Stratégie** : Momentum trading / Scalping haussier
+- 🟢 **Score 12/13** → Excellente qualité
+- 🟢 **Volume 2.3** → Volume x2.3 (forte participation)
+- 🟢 **ATR 1.0** → Volatilité normale (risque maîtrisé)
+- 🟢 **Run 4** → 4 bougies haussières consécutives (momentum)
+- 🟢 **Align 3** → Toutes les EMA alignées
+- 🔥 **Type +2** → **BULL FORT confirmé**
+- 🟢 **T1/T2/T3 = +1** → Toutes les tendances haussières
+
+**Action recommandée** : **ACHAT fort** avec SL serré
+**Probabilité** : Très élevée
+**Stratégie** : Momentum trading / Scalping haussier
 
 ---
 
 ### Exemple 2 : Signal à Éviter ❌
 
+**Affichage dans ProScreener** :
 ```
-1. qualityScore:     8/13     → Qualité moyenne
-2. volumeRatio:      0.7      → Volume faible (30% sous moyenne)
-3. atrRatio:         1.8      → Volatilité élevée (risque)
-4. directionalRun:   2        → Pas de momentum clair
-5. alignmentScore:   1        → Une seule EMA alignée
-6. marketType:       0        → RANGE/Neutre ⚠️
-7. trend1:           +1       → Court terme haussier
-8. trend2:           -1       → Moyen terme BAISSIER (conflit!)
-9. trend3:           0        → Long terme neutre
+Score: 8   | Volume: 0.7 | ATR: 1.8 | Run: 2 | Align: 1 | Type: 0  | T1: +1 | T2: -1 | T3: 0
 ```
 
 **Interprétation** :
-- 🔴 **Action** : **ÉVITER** - Signaux contradictoires
-- ⚠️ **Problème** : Tendances opposées (CT hausse, MT baisse)
-- 📊 **Stratégie** : Attendre clarification du marché
+- 🟡 **Score 8** → Qualité moyenne
+- 🔴 **Volume 0.7** → Volume faible (30% sous moyenne)
+- 🔴 **ATR 1.8** → Volatilité élevée (risque)
+- 🟡 **Run 2** → Pas de momentum clair
+- 🔴 **Align 1** → Une seule EMA alignée
+- ⚠️ **Type 0** → **RANGE/Neutre, pas de direction**
+- ⚠️ **T1: +1, T2: -1, T3: 0** → Tendances contradictoires !
+
+**Action recommandée** : **ÉVITER** - Signaux contradictoires
+**Problème** : CT haussier vs MT baissier
+**Stratégie** : Attendre clarification du marché
 
 ---
 
 ### Exemple 3 : Signal de Vente ⬇️
 
+**Affichage dans ProScreener** :
 ```
-1. qualityScore:     11/13    → Haute qualité
-2. volumeRatio:      1.9      → Volume élevé
-3. atrRatio:         0.9      → Volatilité normale
-4. directionalRun:   5        → 5 bougies baissières consécutives
-5. alignmentScore:   3        → Toutes les EMA alignées
-6. marketType:       -2       → BEAR FORT confirmé ✅
-7. trend1:           -1       → Court terme baissier
-8. trend2:           -1       → Moyen terme baissier
-9. trend3:           -1       → Long terme baissier
+Score: 11  | Volume: 1.9 | ATR: 0.9 | Run: 5 | Align: 3 | Type: -2 | T1: -1 | T2: -1 | T3: -1
 ```
 
 **Interprétation** :
-- 🔴 **Action** : **VENTE/SHORT** avec confirmation
-- 🎯 **Probabilité** : Très élevée (score 11/13 + bear fort)
-- 📊 **Stratégie** : Momentum baissier / Short selling
+- 🟢 **Score 11/13** → Haute qualité
+- 🟢 **Volume 1.9** → Volume élevé (pression vendeuse)
+- 🟢 **ATR 0.9** → Volatilité normale
+- 🟢 **Run 5** → 5 bougies baissières consécutives (fort momentum)
+- 🟢 **Align 3** → Toutes les EMA alignées
+- 🔴 **Type -2** → **BEAR FORT confirmé**
+- 🔴 **T1/T2/T3 = -1** → Toutes les tendances baissières
+
+**Action recommandée** : **VENTE/SHORT** avec confirmation
+**Probabilité** : Très élevée
+**Stratégie** : Momentum baissier / Short selling
 
 ---
 
@@ -193,14 +218,14 @@ Le screener affiche **9 colonnes** dans ProRealTime :
 
 **Objectif** : Capturer les mouvements forts intraday
 
-**Filtres** :
-- `qualityScore >= 9`
-- `marketType = +2` (bull fort) OU `marketType = -2` (bear fort)
-- `directionalRun >= 3`
+**Filtres dans ProScreener** :
+- `Score >= 9`
+- `Type = +2` (bull fort) OU `Type = -2` (bear fort)
+- `Run >= 3`
 
 **Entrée** :
-- Bull fort (+2) → Position LONG
-- Bear fort (-2) → Position SHORT
+- Type +2 → Position **LONG**
+- Type -2 → Position **SHORT**
 
 **Stop-Loss** : Basé sur ATR (ex: 1.5 x ATR)
 
@@ -211,12 +236,14 @@ Le screener affiche **9 colonnes** dans ProRealTime :
 **Objectif** : Ne trader que dans UN sens (LONG ou SHORT)
 
 **Pour LONG uniquement** :
-- Filtrer `marketType >= +1`
+- Filtrer `Type >= +1` dans ProScreener
+- Chercher `Score >= 9` + `Run >= 3`
 - Entrée sur pullback ou cassure
 - Stop sous dernier bas
 
 **Pour SHORT uniquement** :
-- Filtrer `marketType <= -1`
+- Filtrer `Type <= -1` dans ProScreener
+- Chercher `Score >= 9` + `Run >= 3`
 - Entrée sur retracement ou cassure
 - Stop au-dessus dernier haut
 
@@ -226,13 +253,13 @@ Le screener affiche **9 colonnes** dans ProRealTime :
 
 **Objectif** : Profiter des oscillations en range
 
-**Filtres** :
-- `marketType = 0` (neutre)
-- `qualityScore >= 7`
-- Identifier supports/résistances
+**Filtres dans ProScreener** :
+- `Type = 0` (neutre)
+- `Score >= 7`
+- Identifier supports/résistances visuellement
 
 **Stratégie** :
-- Achat au support + confirmation
+- Achat au support + confirmation (chandelier, volume)
 - Vente à la résistance + confirmation
 - Stops serrés hors de la range
 
@@ -242,33 +269,37 @@ Le screener affiche **9 colonnes** dans ProRealTime :
 
 **Objectif** : Trader uniquement les setups parfaits
 
-**Filtres** :
-- `qualityScore >= 11`
-- `alignmentScore = 3`
+**Filtres dans ProScreener** :
+- `Score >= 11`
+- `Align = 3`
 - Ignorer la direction initialement
 
 **Entrée** :
-- Suivre la direction du `marketType`
-- Attendre confirmation (volume, pattern)
+- Suivre la direction du `Type` (+2 = LONG, -2 = SHORT)
+- Attendre confirmation (volume, pattern chandelier)
+- Risque minimal, probabilité maximale
 
 ---
 
-### 5. Gestion de Risque
+### 5. Gestion de Risque Dynamique
 
-**Réduction de position** :
-- `atrRatio > 1.5` → Réduire taille de 50%
-- `volumeRatio < 1.0` → Réduire taille de 30%
+**Réduction de position selon ATR** :
+```
+Si ATR > 1.5 → Réduire taille position de 50%
+Si ATR > 2.0 → Réduire taille position de 75%
+```
 
 **Éviter complètement** :
-- `alignmentScore < 2` → Pas de clarté
-- `marketType = 0` ET pas de stratégie range
-- `qualityScore < 7` → Déjà filtré par défaut
+- `Align < 2` → Pas de clarté tendancielle
+- `Type = 0` ET pas de stratégie range définie
+- `Volume < 0.8` → Manque de liquidité
+- `Score < 7` → Déjà filtré par défaut
 
 ---
 
 ## ⚙️ Paramètres Configurables
 
-Tous les paramètres sont dans le fichier `.prt` (lignes 6-13) :
+Tous les paramètres sont dans le fichier `.prt` (lignes 27-34) :
 
 ```prorealtime
 // === PARAMETRES ===
@@ -284,7 +315,7 @@ emaPeriod3 = 100        // EMA long terme (80-150)
 
 ### Ajuster le seuil de filtrage
 
-**Ligne 304** - Modifier le seuil qualityScore :
+**Ligne 326** - Modifier le seuil Score :
 
 ```prorealtime
 condition = (qualityScore >= 7)  // Changer 7 pour filtrer +/- strict
@@ -295,20 +326,23 @@ condition = (qualityScore >= 7)  // Changer 7 pour filtrer +/- strict
 - `>= 5` → Plus permissif, beaucoup de résultats
 - `>= 11` → Ultra strict, perfection uniquement
 
-### Modifier les colonnes affichées
+### Personnaliser les noms de colonnes
 
-**Ligne 307** - Personnaliser la sortie SCREENER :
+**Ligne 332** - Modifier les alias affichés :
 
 ```prorealtime
-SCREENER[condition](qualityScore, volumeRatio, atrRatio, directionalRun, alignmentScore, marketType, trend1, trend2, trend3)
+SCREENER[condition](
+  qualityScore AS "Score",      // Changer "Score" par autre nom
+  volumeRatio AS "Volume",      // Changer "Volume" par "Vol"
+  atrRatio AS "ATR",            // Changer "ATR" par "Volatilite"
+  ...
+)
 ```
 
-**Variables disponibles** à ajouter :
-- `spreadRatio` - Spread en %
-- `vwapDistance` - Distance au VWAP en %
-- `bodyWickRatio` - Ratio corps/mèche
-- `volumeCV` - Coefficient de variation du volume
-- `slippageRatio` - Slippage estimé
+**Contraintes** :
+- Utiliser des guillemets doubles `"Nom"`
+- Éviter les caractères spéciaux (%, /, etc.)
+- Noms courts recommandés (max 10 caractères)
 
 ---
 
@@ -330,57 +364,67 @@ SCREENER[condition](qualityScore, volumeRatio, atrRatio, directionalRun, alignme
 | **5 min** | 10 | 25 | 50 | Day trading |
 | **15 min** | 5 | 10 | 20 | Swing trading |
 | **1 heure** | 20 | 50 | 100 | Position trading |
+| **Daily** | 10 | 20 | 50 | Swing/Position long terme |
 
-**Pour changer** : Modifier `emaPeriod1`, `emaPeriod2`, `emaPeriod3` dans les paramètres.
+**Pour adapter** : Modifier `emaPeriod1`, `emaPeriod2`, `emaPeriod3` dans les paramètres.
 
 ---
 
 ## 📊 Métriques Détaillées
 
-### 1. Volume (volumeRatio)
+### 1. Score - Score Global de Qualité
+**Variable** : `qualityScore`
+**Calcul** : 10 métriques base + 3 bonus multi-tendance
+**Optimal** : ≥ 10 (haute qualité)
+**Usage** : Filtrer les meilleures opportunités
+
+### 2. Volume - Volume/Moyenne
+**Variable** : `volumeRatio`
 **Calcul** : `volume / AVERAGE[100](volume)`
-**Signification** : Participation du marché
-**Optimal** : ≥ 1.5 (volume 50% supérieur à la moyenne)
+**Optimal** : ≥ 1.5 (volume 50% supérieur)
+**Usage** : Confirmer validité du mouvement de prix
 
-### 2. Spread (spreadRatio)
-**Calcul** : `((high - low) / close) * 100`
-**Signification** : Coûts de transaction estimés
-**Optimal** : < moyenne (spread serré)
-
-### 3. ATR (atrRatio)
+### 3. ATR - Volatilité
+**Variable** : `atrRatio`
 **Calcul** : `AverageTrueRange[14] / AVERAGE[100](ATR)`
-**Signification** : Volatilité actuelle vs historique
 **Optimal** : 0.8 - 1.2 (volatilité normale)
+**Usage** : Ajuster taille de position et stops
 
-### 4. Corps Bougie (bodyWickRatio)
-**Calcul** : `ABS(close - open) / (high - low)`
-**Signification** : Force directionnelle
-**Optimal** : ≥ 0.5 (corps représente 50%+ de la bougie)
-
-### 5. Chevauchement (bodyOverlapPercent)
-**Calcul** : `Overlap actuel / Corps précédent * 100`
-**Signification** : Continuation ou hésitation
-**Optimal** : 30-70% (continuité modérée)
-
-### 6. Run Directionnel (directionalRun)
+### 4. Run - Bougies Consécutives
+**Variable** : `directionalRun`
 **Calcul** : Compte bougies consécutives même direction (max 10)
-**Signification** : Momentum et tendance
 **Optimal** : ≥ 3 (tendance confirmée)
+**Usage** : Détecter momentum et continuation
 
-### 7. VWAP (vwapDistance)
-**Calcul** : `((close - vwap) / vwap) * 100`
-**Signification** : Position vs prix moyen pondéré
-**Optimal** : Distance ≤ 0.5% (proche équilibre)
+### 5. Align - EMA Alignées
+**Variable** : `alignmentScore`
+**Calcul** : Nombre d'EMA (20/50/100) alignées dans même direction
+**Optimal** : 3 (toutes alignées)
+**Usage** : Confirmer force de la tendance
 
-### 8. Slippage (slippageRatio)
-**Calcul** : `spreadRatio / atrPercent`
-**Signification** : Slippage potentiel vs volatilité
-**Optimal** : < 0.1 (slippage faible)
+### 6. Type - Classification Marché
+**Variable** : `marketType`
+**Calcul** : Basé sur `bullishAlign` et `bearishAlign`
+**Optimal** : ±2 (bull fort ou bear fort)
+**Usage** : Filtrage directionnel rapide
 
-### 9. Régularité (volumeCV)
-**Calcul** : `STD[20](volume) / AVERAGE[100](volume)`
-**Signification** : Stabilité du flux de volume
-**Optimal** : < 0.5 (flux régulier)
+### 7. T1 - Tendance Court Terme
+**Variable** : `trend1`
+**Calcul** : Comparaison `close` vs `EMA[20]`
+**Valeurs** : +1 (hausse), 0 (neutre), -1 (baisse)
+**Usage** : Réactivité court terme
+
+### 8. T2 - Tendance Moyen Terme
+**Variable** : `trend2`
+**Calcul** : Comparaison `close` vs `EMA[50]`
+**Valeurs** : +1 (hausse), 0 (neutre), -1 (baisse)
+**Usage** : Confirmation médiane
+
+### 9. T3 - Tendance Long Terme
+**Variable** : `trend3`
+**Calcul** : Comparaison `close` vs `EMA[100]`
+**Valeurs** : +1 (hausse), 0 (neutre), -1 (baisse)
+**Usage** : Tendance de fond
 
 ---
 
@@ -388,20 +432,25 @@ SCREENER[condition](qualityScore, volumeRatio, atrRatio, directionalRun, alignme
 
 ### Limitations Techniques
 
-1. **VWAP se réinitialise chaque jour** (ligne 94)
+1. **VWAP se réinitialise chaque jour** (ligne 114)
    - Le calcul redémarre à chaque nouvelle session
+   - Pertinent uniquement en intraday
 
-2. **Runs directionnels limités à 10 bougies** (lignes 68-86)
+2. **Runs directionnels limités à 10 bougies** (lignes 87-106)
    - Maximum analysé : 10 bougies consécutives
+   - Au-delà, la valeur reste à 10
 
-3. **Multi-tendance désactivable** (ligne 10)
+3. **Multi-tendance désactivable** (ligne 31)
    - Mettre `enableMTF = 0` pour désactiver les EMA
+   - Type, T1, T2, T3 seront tous à 0
 
-4. **Filtrage automatique actif** (ligne 304)
-   - Seuls les `qualityScore >= 7` s'affichent
+4. **Filtrage automatique actif** (ligne 326)
+   - Seuls les `Score >= 7` s'affichent par défaut
+   - Modifier la ligne pour ajuster le seuil
 
 5. **Calculs temps réel uniquement**
    - Aucune fonction look-ahead (pas de biais futur)
+   - Utilisable en live trading
 
 ### Compatibilité
 
@@ -412,8 +461,8 @@ SCREENER[condition](qualityScore, volumeRatio, atrRatio, directionalRun, alignme
 - Tous les timeframes (1min à Daily)
 
 ❌ **Non compatible avec** :
-- ProRealTime V11 et antérieur (syntaxe différente)
-- ProBacktest (ce n'est pas un backtest, c'est un screener)
+- ProRealTime V11 et antérieur (syntaxe AS non supportée)
+- ProBacktest (c'est un screener, pas un backtest)
 
 ---
 
@@ -422,7 +471,7 @@ SCREENER[condition](qualityScore, volumeRatio, atrRatio, directionalRun, alignme
 ### Problème : Aucun résultat
 
 **Solutions** :
-1. Réduire le seuil : `condition = (qualityScore >= 5)` (ligne 304)
+1. Réduire le seuil : `condition = (qualityScore >= 5)` (ligne 326)
 2. Vérifier la watchlist : Contient-elle des instruments actifs ?
 3. Vérifier le timeframe : Essayer 5min ou 15min
 4. Augmenter `lookbackPeriod` à 200
@@ -431,24 +480,32 @@ SCREENER[condition](qualityScore, volumeRatio, atrRatio, directionalRun, alignme
 
 **Solutions** :
 1. Augmenter le seuil : `condition = (qualityScore >= 9)`
-2. Filtrer par marketType : Ajouter `AND ABS(marketType) >= 1`
+2. Filtrer par Type : Ajouter `AND ABS(marketType) >= 1`
 3. Réduire la watchlist : Sélectionner moins d'instruments
 
-### Problème : Erreur de syntaxe
+### Problème : Erreur de syntaxe sur ligne 332
 
 **Solutions** :
-1. Vérifier que TOUT le code est copié (308 lignes)
+1. Vérifier que TOUT le code est copié (333 lignes)
 2. Vérifier qu'aucun caractère spécial n'est altéré
 3. Copier-coller à nouveau depuis le fichier source
-4. Vérifier version ProRealTime (V12+ requis)
+4. Vérifier version ProRealTime (V12+ requis pour alias AS)
+
+### Problème : Colonnes sans noms personnalisés
+
+**Cause** : Version ProRealTime < V12 ne supporte pas `AS "Alias"`
+
+**Solutions** :
+1. Mettre à jour ProRealTime vers V12+
+2. OU retirer les alias (revenir à version 2.1)
 
 ### Problème : Valeurs aberrantes
 
 **Vérifications** :
-- `atrRatio` > 5 → Probable gap ou événement exceptionnel
-- `volumeRatio` > 10 → Volume anormal (news, annonce)
-- `directionalRun` = 10 → Maximum atteint, tendance très forte
-- `marketType` oscille → Marché en indécision
+- `ATR` > 5 → Probable gap ou événement exceptionnel (news)
+- `Volume` > 10 → Volume anormal (annonce, résultats)
+- `Run` = 10 → Maximum atteint, tendance très forte (possible surextension)
+- `Type` oscille → Marché en indécision (attendre clarification)
 
 ---
 
@@ -456,17 +513,18 @@ SCREENER[condition](qualityScore, volumeRatio, atrRatio, directionalRun, alignme
 
 ### Fichiers du Projet
 
-1. **`trading_quality_metrics_v2_FINAL.prt`** (308 lignes)
-   - Code source ProScreener V2.1
+1. **`trading_quality_metrics_v2_FINAL.prt`** (333 lignes)
+   - Code source ProScreener V3.0
+   - Alias personnalisés intégrés
 
 2. **`LEGENDE_CRITERES.md`**
-   - Documentation détaillée des 9 critères
-   - Exemples concrets
+   - Documentation détaillée des 9 colonnes
+   - Exemples concrets avec nouveaux noms
    - Stratégies avancées
 
 3. **`README.md`** (ce fichier)
-   - Guide d'installation et utilisation
-   - Vue d'ensemble du projet
+   - Guide d'installation et utilisation V3
+   - Vue d'ensemble complète du projet
 
 ### Ressources Externes
 
@@ -479,32 +537,47 @@ SCREENER[condition](qualityScore, volumeRatio, atrRatio, directionalRun, alignme
 
 ## 📜 Changelog
 
-### Version 2.2 (2025-10-26) - Actuelle
+### Version 3.0 (2025-10-26) - Actuelle ⭐ MAJEURE
+
+**🎉 RÉVOLUTION : Colonnes Personnalisées**
+- ✅ **Alias AS fonctionnels** : Noms personnalisés dans ProScreener
+- ✅ **9 colonnes lisibles** : Score, Volume, ATR, Run, Align, Type, T1, T2, T3
+- ✅ **Interface professionnelle** : Compréhension immédiate des résultats
+- ✅ **Testé et validé** : Fonctionne parfaitement sur ProRealTime V12+
+
+**Impact utilisateur** :
+- ⚡ Gain de temps énorme (plus besoin de se référer à la doc)
+- 📊 Interface épurée et professionnelle
+- 🎯 Décisions plus rapides grâce à la clarté
+
+**Changements techniques** :
+```prorealtime
+// AVANT V3
+SCREENER[condition](qualityScore, volumeRatio, ...)
+
+// APRÈS V3
+SCREENER[condition](qualityScore AS "Score", volumeRatio AS "Volume", ...)
+```
+
+---
+
+### Version 2.2 (2025-10-26)
 
 **📝 Améliorations de Nomenclature** :
-- ✅ **En-tête détaillé** : Légende complète des 9 colonnes dans le code source
-- ✅ **Noms explicites** : Chaque critère nommé clairement (qualityScore, volumeRatio, etc.)
-- ✅ **Commentaires enrichis** : Documentation inline pour meilleure lisibilité
-- ✅ **Légende marketType** : Ajout de la signification directement dans le code
+- ✅ En-tête détaillé avec légende dans le code
+- ✅ Commentaires enrichis
+- ✅ Documentation "Colonne X: nomVariable"
 
-**Objectif** :
-- Faciliter la compréhension du code pour les utilisateurs
-- Clarifier la correspondance colonnes SCREENER ↔ noms de critères
-- Améliorer la maintenabilité du script
+---
 
 ### Version 2.1 (2025-10-26)
 
 **🆕 Nouveautés** :
-- ✅ **Critère `marketType`** : Classification Bull/Bear/Range automatique
-- ✅ **9 colonnes** au lieu de 8 (ajout marketType en position 6)
-- ✅ **Filtrage directionnel** : Facilite le trading LONG/SHORT uniquement
-- ✅ **Documentation enrichie** : LEGENDE_CRITERES.md étendue
-- ✅ **Stratégies mises à jour** : Nouvelles stratégies utilisant marketType
+- ✅ Critère `marketType` : Classification Bull/Bear/Range automatique
+- ✅ 9 colonnes au lieu de 8
+- ✅ Filtrage directionnel facilité
 
-**Améliorations** :
-- 📊 Décalage trend1/trend2/trend3 vers critères 7/8/9
-- 📖 README V2.1 complet rédigé
-- 🎯 Exemples mis à jour avec marketType
+---
 
 ### Version 2.0 (2025-10-26)
 
@@ -513,12 +586,13 @@ SCREENER[condition](qualityScore, volumeRatio, atrRatio, directionalRun, alignme
 - ✅ Suppression fonctions incompatibles (TIMEFRAME, median, ELSIF)
 - ✅ Système EMA multi-tendance (proxy 3 timeframes)
 - ✅ Score 0-13 (10 base + 3 bonus)
-- ✅ Code épuré (suppression variables inutilisées)
-- ✅ 8 colonnes SCREENER
+- ✅ Code épuré
+
+---
 
 ### Version 1.x (archives)
 
-Versions antérieures avec erreurs de syntaxe et incompatibilités.
+Versions antérieures avec erreurs de syntaxe et incompatibilités (obsolètes).
 
 ---
 
@@ -527,22 +601,22 @@ Versions antérieures avec erreurs de syntaxe et incompatibilités.
 ### Risques du Trading
 
 - ⚠️ **Le trading comporte des risques** : Vous pouvez perdre tout ou partie de votre capital
-- ⚠️ **Aucun système n'est infaillible** : Même un score 13/13 ne garantit pas le profit
+- ⚠️ **Aucun système n'est infaillible** : Même un Score 13/13 ne garantit pas le profit
 - ⚠️ **Gestion du risque obligatoire** : Ne risquez jamais plus de 1-2% par trade
 - ⚠️ **Backtesting recommandé** : Testez sur historique avant trading réel
 - ⚠️ **Éducation continue** : Formez-vous avant de trader avec argent réel
 
 ### Conditions de Marché
 
-- 📉 **Gap et news** : Le screener ne prédit pas les gaps ou annonces
-- 📊 **Slippage réel** : Le slippage calculé est une estimation
-- 💰 **Frais non inclus** : Commissions, spreads réels non calculés
-- ⏰ **Heures de marché** : Privilégier les heures liquides
+- 📉 **Gap et news** : Le screener ne prédit pas les gaps ou annonces importantes
+- 📊 **Slippage réel** : Le slippage calculé est une estimation, pas une garantie
+- 💰 **Frais non inclus** : Commissions, spreads réels non calculés dans le score
+- ⏰ **Heures de marché** : Privilégier les heures liquides (éviter pre-market/after-hours)
 
 ### Utilisation du Code
 
-- 📝 **Licence éducative** : Code fourni à des fins d'apprentissage
-- 🚫 **Aucune garantie** : Fourni "tel quel" sans garantie
+- 📝 **Licence éducative** : Code fourni à des fins d'apprentissage uniquement
+- 🚫 **Aucune garantie** : Fourni "tel quel" sans garantie de performance
 - 🔧 **Modifications autorisées** : Vous pouvez adapter selon vos besoins
 - 📢 **Partage encouragé** : Vous pouvez partager avec attribution
 
@@ -552,26 +626,29 @@ Versions antérieures avec erreurs de syntaxe et incompatibilités.
 
 ### Optimisations Possibles
 
-1. **Ajouter des patterns** : Hammer, Engulfing, Doji
-2. **Intégrer RSI/MACD** : Confirmation momentum
-3. **Détection support/résistance** : Niveaux clés
-4. **Stop-Loss/Take-Profit auto** : Calculs basés ATR
-5. **Filtres horaires** : Éviter heures creuses
+1. **Ajouter des patterns chandeliers** : Hammer, Engulfing, Doji, Pin Bar
+2. **Intégrer RSI/MACD** : Confirmation momentum et divergences
+3. **Détection support/résistance** : Niveaux clés automatiques
+4. **Stop-Loss/Take-Profit auto** : Calculs basés ATR et volatilité
+5. **Filtres horaires** : Éviter heures creuses (12h-14h, 17h-18h)
+6. **Alertes personnalisées** : Notification quand Score >= 11 + Type = ±2
 
 ### Backtesting
 
 Pour tester l'efficacité historique :
-1. Utiliser ProBacktest (nécessite réécriture en ProBuilder)
-2. Exporter résultats screener vers Excel
-3. Analyser performances des signaux qualityScore >= 10
-4. Calculer win rate par marketType
+1. Utiliser ProBacktest (nécessite réécriture partielle en ProBuilder)
+2. Exporter résultats screener vers Excel/CSV
+3. Analyser performances des signaux Score >= 10
+4. Calculer win rate par Type (Bull Fort vs Bear Fort)
+5. Optimiser paramètres (lookbackPeriod, EMA, seuils)
 
 ### Automatisation
 
 Possibilités avec ProOrder (compte réel uniquement) :
-- Entrées automatiques sur `qualityScore >= 11`
-- Filtrage par `marketType` selon stratégie
-- Stops basés sur `atrRatio`
+- Entrées automatiques sur `Score >= 11` + `Type = +2`
+- Filtrage par `Type` selon stratégie (LONG/SHORT uniquement)
+- Stops basés sur `ATR` (ex: 2 x ATR)
+- Trailing stop adaptatif selon volatilité
 
 ---
 
@@ -587,42 +664,68 @@ Possibilités avec ProOrder (compte réel uniquement) :
 ### Contributions
 
 Améliorations bienvenues ! Idées :
-- Nouveaux critères de qualité
+- Nouveaux critères de qualité (RSI, MACD, Stochastic)
 - Optimisations performance
 - Stratégies additionnelles
-- Traductions
+- Traductions (English, Español)
+- Versions pour autres timeframes
 
 ---
 
 ## 🏆 Résumé Rapide (TL;DR)
 
-**Ce que fait le screener** :
+**Ce que fait le screener V3** :
 - ✅ Calcule un score de qualité 0-13 pour chaque instrument
 - ✅ Classe automatiquement : Bull Fort/Modéré, Bear Fort/Modéré, Range/Neutre
-- ✅ Affiche 9 critères : score, volume, volatilité, momentum, alignement, type marché, 3 tendances
+- ✅ Affiche 9 colonnes avec **noms personnalisés lisibles**
+- ✅ Interface professionnelle : **Score | Volume | ATR | Run | Align | Type | T1 | T2 | T3**
 
 **Comment l'utiliser** :
 1. Copier le code `.prt` dans ProScreener
-2. Lancer sur timeframe 1 minute
-3. Trier par `qualityScore` (colonne 1) décroissant
-4. Filtrer par `marketType` (colonne 6) selon stratégie
+2. Lancer sur timeframe **1 minute**
+3. Trier par **Score** (colonne 1) décroissant
+4. Filtrer par **Type** (colonne 6) selon stratégie
 
 **Meilleures pratiques** :
-- 🎯 Score ≥ 10 + marketType = ±2 → Signaux les plus fiables
-- ⚠️ marketType = 0 → Éviter ou faire du range trading
+- 🎯 **Score ≥ 10** + **Type = ±2** → Signaux les plus fiables
+- ⚠️ **Type = 0** → Éviter ou faire du range trading
 - 📊 Combiner avec analyse technique classique (S/R, patterns)
 - 💰 Gestion de risque stricte (max 1-2% par trade)
 
+**Nouveauté V3** :
+- 🆕 **Colonnes nommées** : Fini les noms de variables techniques !
+- ⚡ **Interface claire** : Compréhension immédiate
+- 🚀 **Testé et validé** : Fonctionne parfaitement
+
 ---
 
-**Version**: 2.2
+**Version**: 3.0
 **Date**: 2025-10-26
 **Compatibilité**: ProRealTime V12+ / ProScreener
 **Auteur**: Script généré avec Claude Code
 **Licence**: Éducatif - Utilisez à vos propres risques
+**Statut**: ✅ Testé et fonctionnel
 
 ---
 
 **⭐ Si ce screener vous aide, n'hésitez pas à le partager !**
 
 🚀 **Bon trading et que les probabilités soient avec vous !**
+
+---
+
+## 🎯 Tableau Récapitulatif des Colonnes
+
+| Colonne | Nom Affiché | Variable | Signification | Bon Signal |
+|---------|-------------|----------|---------------|------------|
+| 1 | **Score** | qualityScore | Qualité globale | ≥ 10 |
+| 2 | **Volume** | volumeRatio | Liquidité | ≥ 1.5 |
+| 3 | **ATR** | atrRatio | Volatilité | 0.8-1.2 |
+| 4 | **Run** | directionalRun | Momentum | ≥ 3 |
+| 5 | **Align** | alignmentScore | Cohérence tendances | 3 |
+| 6 | **Type** | marketType | Bull/Bear/Range | ±2 |
+| 7 | **T1** | trend1 | Court terme | ±1 |
+| 8 | **T2** | trend2 | Moyen terme | ±1 |
+| 9 | **T3** | trend3 | Long terme | ±1 |
+
+**Signal idéal** : `Score: 12 | Volume: 2.0 | ATR: 1.0 | Run: 4 | Align: 3 | Type: ±2 | T1/T2/T3: ±1`

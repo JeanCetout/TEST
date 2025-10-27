@@ -1,12 +1,13 @@
 // ============================================================================
-// ProScreener V2.2 - Metriques de Trading avec Classification de Marche
+// ProScreener V3.0 - Metriques de Trading avec Colonnes Personnalisees
 // ============================================================================
 // Compatible: ProRealTime V12+
 // Timeframe recommande: 1 minute
 // Auteur: Generated with Claude Code
 // Date: 2025-10-26
+// Version: 3.0 - ALIAS PERSONNALISES DANS SCREENER
 //
-// COLONNES SCREENER (9 criteres avec alias personnalises):
+// COLONNES SCREENER (9 colonnes avec noms personnalises):
 // ---------------------------------------------------------
 // Colonne 1: "Score"   - Score global de qualite (0-13)
 // Colonne 2: "Volume"  - Volume/Moyenne (liquidite)
@@ -18,7 +19,7 @@
 // Colonne 8: "T2"      - Tendance EMA 50 moyen terme (-1/0/+1)
 // Colonne 9: "T3"      - Tendance EMA 100 long terme (-1/0/+1)
 //
-// LEGENDE marketType:
+// LEGENDE Type (marketType):
 // +2 = Bull Fort | +1 = Bull Modere | 0 = Range/Neutre
 // -1 = Bear Modere | -2 = Bear Fort
 // ============================================================================
