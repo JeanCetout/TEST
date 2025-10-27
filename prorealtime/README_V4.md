@@ -1,11 +1,25 @@
-# 📊 ProRealTime Trading Quality Metrics - Version 4.0
+# 📊 ProRealTime Trading Quality Metrics - Version 4.1
 
 **Screener ProRealTime avancé avec SpeedMeter pour mesurer la vitesse des mouvements - Optimisé pour scalping 1/5/10 minutes.**
 
-[![Version](https://img.shields.io/badge/version-4.0-brightgreen.svg)](https://github.com)
+[![Version](https://img.shields.io/badge/version-4.1-brightgreen.svg)](https://github.com)
 [![ProRealTime](https://img.shields.io/badge/ProRealTime-V12%2B-green.svg)](https://www.prorealtime.com)
 [![License](https://img.shields.io/badge/license-Educational-orange.svg)](https://github.com)
 [![Tested](https://img.shields.io/badge/status-Tested%20%26%20Working-success.svg)](https://github.com)
+
+---
+
+## 🔧 VERSION 4.1 - Actuelle (Correctif)
+
+**VERSION 4.1** corrige une erreur de syntaxe de la V4.0 :
+- ✅ **Correction** : Intégration de `minSpeedScalping` dans le critère `Scalp`
+- ✅ **Critère Scalp amélioré** : Nécessite maintenant **4 conditions** au lieu de 3
+  - Volume ≥ 2.0x
+  - Spread ≤ 0.3%
+  - ATR ≤ 1.3x
+  - **Speed ≥ 1.8** 🆕 (NOUVEAU dans V4.1)
+
+**Fichier recommandé** : `trading_quality_metrics_v4_1.prt` (391 lignes)
 
 ---
 
@@ -198,9 +212,11 @@ La colonne **"Type"** (marketType) classe automatiquement chaque instrument :
 
 ### Étape 2 : Copier le Code
 
-1. Ouvrez le fichier **`proscreener/trading_quality_metrics_v4.prt`**
-2. **Copiez tout le contenu** (442 lignes)
+1. Ouvrez le fichier **`proscreener/trading_quality_metrics_v4_1.prt`** (VERSION 4.1 recommandée)
+2. **Copiez tout le contenu** (391 lignes)
 3. **Collez** dans la fenêtre ProScreener
+
+**Note** : Le fichier `trading_quality_metrics_v4.prt` (V4.0) contient une erreur corrigée dans V4.1
 
 ### Étape 3 : Configuration Recommandée
 
@@ -601,7 +617,39 @@ SCREENER[condition](
 
 ## 📜 Changelog
 
-### Version 4.0 (2025-10-27) - Actuelle ⭐ SPEEDMETER
+### Version 4.1 (2025-10-27) - Actuelle ⭐ CORRECTIF
+
+**🔧 CORRECTIF : Intégration minSpeedScalping dans Scalp**
+- ✅ **Correction erreur** : Variable `minSpeedScalping` maintenant utilisée
+- ✅ **Critère Scalp amélioré** : 4 conditions au lieu de 3
+  - Volume ≥ 2.0x
+  - Spread ≤ 0.3%
+  - ATR ≤ 1.3x
+  - **Speed ≥ 1.8** 🆕 (nouveau dans V4.1)
+- ✅ **Plus précis** : Scalp = 1 garantit vitesse suffisante
+- ✅ **Fichier** : `trading_quality_metrics_v4_1.prt` (391 lignes)
+
+**Impact** :
+- ⚡ Scalp = 1 nécessite maintenant mouvements rapides (Speed ≥ 1.8)
+- ❌ Évite faux positifs (bonnes conditions mais lent)
+- 🎯 Filtrage scalping encore plus précis
+
+**Code modifié** (ligne 378) :
+```prorealtime
+// AVANT V4.0
+IF volumeRatio >= 2.0 AND spreadRatio <= 0.3 AND atrRatio <= 1.3 THEN
+    scalpQuality = 1
+ENDIF
+
+// APRÈS V4.1
+IF volumeRatio >= 2.0 AND spreadRatio <= 0.3 AND atrRatio <= 1.3 AND speedMeter >= 1.8 THEN
+    scalpQuality = 1
+ENDIF
+```
+
+---
+
+### Version 4.0 (2025-10-27) - SPEEDMETER
 
 **🆕 SPEEDMETER : Mesure de Vitesse des Mouvements**
 - ✅ **Nouvelle colonne "Speed"** : SpeedMeter pour vitesse/activité
