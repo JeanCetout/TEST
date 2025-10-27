@@ -1,14 +1,16 @@
-# 📊 Légende des Critères - ProScreener Trading Quality Metrics V2.0
+# 📊 Légende des Critères - ProScreener Trading Quality Metrics V2.2
 
 ## Vue d'ensemble
 
-Le screener affiche **9 colonnes** numérotées de 1 à 9 dans ProRealTime. Voici leur signification exacte.
+Le screener affiche **9 colonnes** nommées dans ProRealTime. Voici leur signification exacte.
+
+**Nomenclature V2.2** : Chaque colonne affiche un critère avec son nom explicite (qualityScore, volumeRatio, atrRatio, etc.)
 
 ---
 
 ## 🔢 Colonnes du Screener (9 colonnes)
 
-### Critère 1 : `qualityScore` - Score Global de Qualité
+### Colonne 1 : `qualityScore` - Score Global de Qualité
 **Plage**: 0 à 13
 **Signification**: Score composite calculé à partir de 10 métriques de qualité + bonus multi-tendance
 
@@ -36,7 +38,7 @@ Le screener affiche **9 colonnes** numérotées de 1 à 9 dans ProRealTime. Voic
 
 ---
 
-### Critère 2 : `volumeRatio` - Volume/Moyenne
+### Colonne 2 : `volumeRatio` - Volume/Moyenne
 **Plage**: 0 à ∞
 **Signification**: Ratio du volume actuel par rapport à la moyenne des 100 dernières bougies
 
@@ -50,7 +52,7 @@ Le screener affiche **9 colonnes** numérotées de 1 à 9 dans ProRealTime. Voic
 
 ---
 
-### Critère 3 : `atrRatio` - ATR Actuel/ATR Moyen
+### Colonne 3 : `atrRatio` - ATR Actuel/ATR Moyen
 **Plage**: 0 à ∞
 **Signification**: Ratio de l'ATR actuel (volatilité sur 14 périodes) par rapport à la moyenne des 100 dernières valeurs
 
@@ -64,7 +66,7 @@ Le screener affiche **9 colonnes** numérotées de 1 à 9 dans ProRealTime. Voic
 
 ---
 
-### Critère 4 : `directionalRun` - Bougies Consécutives
+### Colonne 4 : `directionalRun` - Bougies Consécutives
 **Plage**: 0 à 10
 **Signification**: Nombre de bougies haussières ou baissières consécutives (max 10 analysées)
 
@@ -80,7 +82,7 @@ Le screener affiche **9 colonnes** numérotées de 1 à 9 dans ProRealTime. Voic
 
 ---
 
-### Critère 5 : `alignmentScore` - Alignement Multi-Tendance
+### Colonne 5 : `alignmentScore` - Alignement Multi-Tendance
 **Plage**: 0 à 3
 **Signification**: Nombre d'EMA (20, 50, 100) alignées dans la même direction
 
@@ -96,7 +98,7 @@ Le screener affiche **9 colonnes** numérotées de 1 à 9 dans ProRealTime. Voic
 
 ---
 
-### Critère 6 : `marketType` - Type de Marché (Bull/Bear/Range)
+### Colonne 6 : `marketType` - Type de Marché (Bull/Bear/Range)
 **Plage**: -2 à +2
 **Signification**: Classification automatique du type de marché basée sur l'alignement des EMA
 
@@ -122,7 +124,7 @@ Le screener affiche **9 colonnes** numérotées de 1 à 9 dans ProRealTime. Voic
 
 ---
 
-### Critères 7, 8, 9 : `trend1`, `trend2`, `trend3` - Tendances EMA
+### Colonnes 7, 8, 9 : `trend1`, `trend2`, `trend3` - Tendances EMA
 **Plage**: -1, 0, +1
 **Signification**: Direction de chaque EMA par rapport au prix
 
@@ -150,15 +152,15 @@ Indécision:  trend1=+1, trend2=-1, trend3=0 (alignmentScore=1)
 
 ### Exemple 1 : Signal d'Achat Optimal ⭐⭐⭐
 ```
-Critère 1 (qualityScore):     12
-Critère 2 (volumeRatio):      2.3
-Critère 3 (atrRatio):         1.0
-Critère 4 (directionalRun):   4
-Critère 5 (alignmentScore):   3
-Critère 6 (marketType):       +2
-Critère 7 (trend1):           +1
-Critère 8 (trend2):           +1
-Critère 9 (trend3):           +1
+Colonne 1 - qualityScore:     12
+Colonne 2 - volumeRatio:      2.3
+Colonne 3 - atrRatio:         1.0
+Colonne 4 - directionalRun:   4
+Colonne 5 - alignmentScore:   3
+Colonne 6 - marketType:       +2
+Colonne 7 - trend1:           +1
+Colonne 8 - trend2:           +1
+Colonne 9 - trend3:           +1
 ```
 
 **Analyse**:
@@ -174,15 +176,15 @@ Critère 9 (trend3):           +1
 
 ### Exemple 2 : Signal à Éviter ❌
 ```
-Critère 1 (qualityScore):     8
-Critère 2 (volumeRatio):      0.7
-Critère 3 (atrRatio):         1.8
-Critère 4 (directionalRun):   2
-Critère 5 (alignmentScore):   1
-Critère 6 (marketType):       0
-Critère 7 (trend1):           +1
-Critère 8 (trend2):           -1
-Critère 9 (trend3):           0
+Colonne 1 - qualityScore:     8
+Colonne 2 - volumeRatio:      0.7
+Colonne 3 - atrRatio:         1.8
+Colonne 4 - directionalRun:   2
+Colonne 5 - alignmentScore:   1
+Colonne 6 - marketType:       0
+Colonne 7 - trend1:           +1
+Colonne 8 - trend2:           -1
+Colonne 9 - trend3:           0
 ```
 
 **Analyse**:
@@ -198,15 +200,15 @@ Critère 9 (trend3):           0
 
 ### Exemple 3 : Signal de Vente ⬇️
 ```
-Critère 1 (qualityScore):     11
-Critère 2 (volumeRatio):      1.9
-Critère 3 (atrRatio):         0.9
-Critère 4 (directionalRun):   5
-Critère 5 (alignmentScore):   3
-Critère 6 (marketType):       -2
-Critère 7 (trend1):           -1
-Critère 8 (trend2):           -1
-Critère 9 (trend3):           -1
+Colonne 1 - qualityScore:     11
+Colonne 2 - volumeRatio:      1.9
+Colonne 3 - atrRatio:         0.9
+Colonne 4 - directionalRun:   5
+Colonne 5 - alignmentScore:   3
+Colonne 6 - marketType:       -2
+Colonne 7 - trend1:           -1
+Colonne 8 - trend2:           -1
+Colonne 9 - trend3:           -1
 ```
 
 **Analyse**:
@@ -314,6 +316,6 @@ Ajouter/retirer des colonnes selon vos besoins (ex: ajouter `spreadRatio`, `vwap
 
 ---
 
-**Version**: 2.1 (ajout marketType)
+**Version**: 2.2 (nomenclature explicite des colonnes)
 **Date**: 2025-10-26
 **Compatibilité**: ProRealTime V12+ / ProScreener

@@ -1,8 +1,8 @@
-# 📊 ProRealTime Trading Quality Metrics - Version 2.1
+# 📊 ProRealTime Trading Quality Metrics - Version 2.2
 
 **Screener ProRealTime avancé pour analyser la qualité de trading et classifier automatiquement les types de marchés (Bull/Bear/Range).**
 
-[![Version](https://img.shields.io/badge/version-2.1-blue.svg)](https://github.com)
+[![Version](https://img.shields.io/badge/version-2.2-blue.svg)](https://github.com)
 [![ProRealTime](https://img.shields.io/badge/ProRealTime-V12%2B-green.svg)](https://www.prorealtime.com)
 [![License](https://img.shields.io/badge/license-Educational-orange.svg)](https://github.com)
 
@@ -479,7 +479,20 @@ SCREENER[condition](qualityScore, volumeRatio, atrRatio, directionalRun, alignme
 
 ## 📜 Changelog
 
-### Version 2.1 (2025-10-26) - Actuelle
+### Version 2.2 (2025-10-26) - Actuelle
+
+**📝 Améliorations de Nomenclature** :
+- ✅ **En-tête détaillé** : Légende complète des 9 colonnes dans le code source
+- ✅ **Noms explicites** : Chaque critère nommé clairement (qualityScore, volumeRatio, etc.)
+- ✅ **Commentaires enrichis** : Documentation inline pour meilleure lisibilité
+- ✅ **Légende marketType** : Ajout de la signification directement dans le code
+
+**Objectif** :
+- Faciliter la compréhension du code pour les utilisateurs
+- Clarifier la correspondance colonnes SCREENER ↔ noms de critères
+- Améliorer la maintenabilité du script
+
+### Version 2.1 (2025-10-26)
 
 **🆕 Nouveautés** :
 - ✅ **Critère `marketType`** : Classification Bull/Bear/Range automatique
@@ -602,7 +615,7 @@ Améliorations bienvenues ! Idées :
 
 ---
 
-**Version**: 2.1
+**Version**: 2.2
 **Date**: 2025-10-26
 **Compatibilité**: ProRealTime V12+ / ProScreener
 **Auteur**: Script généré avec Claude Code

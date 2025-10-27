@@ -1,7 +1,27 @@
-// ProScreener V2.1 - Metriques de Trading
-// Compatible ProRealTime V12+
+// ============================================================================
+// ProScreener V2.2 - Metriques de Trading avec Classification de Marche
+// ============================================================================
+// Compatible: ProRealTime V12+
 // Timeframe recommande: 1 minute
-// NEW: Critere marketType (bull/bear/range classification)
+// Auteur: Generated with Claude Code
+// Date: 2025-10-26
+//
+// COLONNES SCREENER (9 criteres affiches):
+// ------------------------------------------
+// Colonne 1: qualityScore       - Score global de qualite (0-13)
+// Colonne 2: volumeRatio         - Volume/Moyenne (liquidite)
+// Colonne 3: atrRatio            - Volatilite actuelle/moyenne
+// Colonne 4: directionalRun      - Bougies consecutives (momentum)
+// Colonne 5: alignmentScore      - EMA alignees (0-3)
+// Colonne 6: marketType          - Classification Bull/Bear/Range (-2 a +2)
+// Colonne 7: trend1              - Tendance EMA 20 court terme (-1/0/+1)
+// Colonne 8: trend2              - Tendance EMA 50 moyen terme (-1/0/+1)
+// Colonne 9: trend3              - Tendance EMA 100 long terme (-1/0/+1)
+//
+// LEGENDE marketType:
+// +2 = Bull Fort | +1 = Bull Modere | 0 = Range/Neutre
+// -1 = Bear Modere | -2 = Bear Fort
+// ============================================================================
 
 // === PARAMETRES ===
 lookbackPeriod = 100
@@ -302,7 +322,11 @@ IF enableMTF = 1 THEN
 ENDIF
 
 // === 12. CONDITION ===
+// Filtre: Affiche uniquement les instruments avec score >= 7
 condition = (qualityScore >= 7)
 
-// === 13. SCREENER ===
+// === 13. SCREENER - SORTIE (9 COLONNES) ===
+// Affiche les 9 criteres nommes dans l'ordre:
+// Col1=qualityScore, Col2=volumeRatio, Col3=atrRatio, Col4=directionalRun,
+// Col5=alignmentScore, Col6=marketType, Col7=trend1, Col8=trend2, Col9=trend3
 SCREENER[condition](qualityScore, volumeRatio, atrRatio, directionalRun, alignmentScore, marketType, trend1, trend2, trend3)
